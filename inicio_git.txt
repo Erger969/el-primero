@@ -1,0 +1,18 @@
+# 1. Clonar el repositorio (solo la primera vez)
+git clone https://github.com/usuario-compañero/proyecto.git
+
+# 2. Entrar a la carpeta del proyecto
+cd proyecto
+
+# 3. Actualizar toda la información remota
+git fetch origin
+
+# 4. Ver todas las ramas disponibles (locales y remotas)
+git branch -a
+
+# 5. Traer la rama en la que estabas trabajando
+git checkout feature/proy_v1.1   # <- tu rama
+
+# 6. Verificar que estás en la rama correcta
+git branch
+# Deberías ver: * feature/proy_v1.1
