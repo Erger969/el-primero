@@ -1,3 +1,4 @@
+---------------------------------------AL INICIAR Y ACTUALIZAR EL REPOSITORIO PREVIO -------------------------------------
 # 1. Clonar el repositorio (solo la primera vez)
 git clone https://github.com/usuario-compañero/proyecto.git
 
@@ -16,3 +17,11 @@ git checkout feature/proy_v1.1   # <- tu rama
 # 6. Verificar que estás en la rama correcta
 git branch
 # Deberías ver: * feature/proy_v1.1
+
+---------------------------------------DESPUES DE TERMINAR Y GUARDAR LOS CAMBIOS-------------------------------------
+# 1. Guardar tus cambios
+git add .
+git commit -m "feat: avancé X cosa desde laptop"
+
+# 2. Subir los cambios a GitHub
+git push origin feature/proy_v1.1
