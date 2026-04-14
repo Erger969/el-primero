@@ -20,8 +20,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'lastname',
         'email',
         'password',
+        'foto_perfil',
+        'descripcion',
+        'career_id',
+        'role_id',
     ];
 
     /**
@@ -45,5 +50,45 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function career()
+    {
+        return $this->belongsTo(Career::class);
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function reactions()
+    {
+        return $this->hasMany(Reaction::class);
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
+    }
+
+    public function masterActivities()
+    {
+        return $this->hasMany(MasterActivity::class, 'master_id');
+    }
+
+    public function masterRequest()
+    {
+        return $this->hasOne(MasterRequest::class);
+    }
+
+    public function postModifications()
+    {
+        return $this->hasMany(PostModification::class);
     }
 }
