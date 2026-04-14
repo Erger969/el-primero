@@ -17,4 +17,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Recuperación de contraseña personalizada
+Route::middleware('guest')->group(function () {
+    Route::get('/forgot-password', [App\Http\Controllers\Auth\CustomForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [App\Http\Controllers\Auth\CustomForgotPasswordController::class, 'sendResetCode'])->name('password.email');
+    Route::get('/reset-password', [App\Http\Controllers\Auth\CustomForgotPasswordController::class, 'showResetForm'])->name('password.reset.form');
+    Route::post('/reset-password', [App\Http\Controllers\Auth\CustomForgotPasswordController::class, 'reset'])->name('password.update');
+});
+
 require __DIR__.'/auth.php';
