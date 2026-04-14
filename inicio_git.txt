@@ -27,3 +27,5 @@ git commit -m "feat: avancé X cosa desde laptop"
 git push origin feature/proy_v1.1
 
 ---------------------------------------PASOS PARA INICIAR EL PROYECTO EN VISUAL STUDIO CODE-------------------------------------
+# crear el enlace del servidor local
+php artisan serve
