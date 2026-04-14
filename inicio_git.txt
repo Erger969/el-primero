@@ -25,3 +25,5 @@ git commit -m "feat: avancé X cosa desde laptop"
 
 # 2. Subir los cambios a GitHub
 git push origin feature/proy_v1.1
+
+---------------------------------------PASOS PARA INICIAR EL PROYECTO EN VISUAL STUDIO CODE-------------------------------------
