@@ -14,9 +14,14 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('lastname');  // ← Agregar
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('foto_perfil')->nullable();  // ← Agregar
+            $table->text('descripcion')->nullable();    // ← Agregar
+            $table->foreignId('career_id')->nullable()->constrained('careers')->onDelete('set null');  // ← Agregar
+            $table->tinyInteger('role_id')->default(1);  // ← Agregar (1=Univ, 2=Master, 3=Admin)
             $table->rememberToken();
             $table->timestamps();
         });
