@@ -29,3 +29,22 @@ git push origin feature/proy_v1.1
 ---------------------------------------PASOS PARA INICIAR EL PROYECTO EN VISUAL STUDIO CODE-------------------------------------
 # crear el enlace del servidor local
 php artisan serve
+
+# crear el .env (ya que el github no sube el original ".env" pero si el ".env.example" de ahi copia todo al ".env)
+
+#para el composer antes de ejecutar el proyecto laravel 12 tienes que tener el composer y paquetes instalados correctamente
+composer install
+
+#problemas de KeyException: suele ser por el hash que no tenia el ".env" ejecuta el siguiente codigo para solcionar:
+php artisan key:generate
+
+#actualizar la base de datos en phpMyAdmin:
+
+Comando	                        ¿Qué hace?	                                    ¿Cuándo usarlo?
+php artisan migrate	            Ejecuta migraciones pendientes	                Uso diario normal
+php artisan migrate:fresh	    Borra TODAS las tablas y las recrea desde cero	Cuando quieres empezar limpio
+php artisan migrate:refresh	    Rollback + migrate (borra y recrea)	            Similar a fresh, pero ejecuta seeders
+php artisan migrate:reset	    Borra todas las migraciones	                    Limpiar todo
+php artisan migrate:status	    Muestra estado de migraciones	                Ver qué falta
+php artisan migrate:rollback	Deshace la última migración	                    Si cometiste un error
+
