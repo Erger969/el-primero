@@ -48,3 +48,18 @@ php artisan migrate:reset	    Borra todas las migraciones	                    Li
 php artisan migrate:status	    Muestra estado de migraciones	                Ver qué falta
 php artisan migrate:rollback	Deshace la última migración	                    Si cometiste un error
 
+#orden de las ejecuciones de las migraciones:
+
+php artisan make:migration create_careers_table *
+php artisan make:migration_create_users_table   *
+php artisan make:migration create_posts_table
+php artisan make:migration create_comments_table
+php artisan make:migration create_reactions_table
+php artisan make:migration create_reports_table
+php artisan make:migration create_post_modifications_table
+php artisan make:migration create_master_activities_table
+php artisan make:migration create_master_requests_table
+php artisan make:migration create_password_reset_codes_table
+
+#ingresar datos a las tablas 
+php artisan db:seed
