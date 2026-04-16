@@ -32,7 +32,7 @@
                             
                             @foreach($reactionTypes as $key => $emoji)
                                 <button 
-                                    class="reaction-btn px-3 py-1 rounded {{ $currentReaction === $key ? 'bg-blue-500 text-white' : 'bg-gray-200' }}"
+                                    class="reaction-btn px-3 py-1 rounded transition {{ $currentReaction === $key ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300' }}"
                                     data-post-id="{{ $post->id }}"
                                     data-type="{{ $key }}">
                                     {{ $emoji }} {{ $key }}
@@ -41,10 +41,10 @@
                             @endforeach
                         </div>
 
-                        <!-- Comentarios simplificados -->
+                        <!-- Mostrar comentarios existentes -->
                         <div class="border-t pt-4 mt-2">
                             <h4 class="font-bold mb-2">Comentarios ({{ $post->comments->count() }})</h4>
-                            <!-- Mostrar comentarios existentes -->
+                            
                             @foreach($post->comments as $comment)
                                 <div class="mb-2 text-sm border-b pb-1">
                                     <strong>{{ $comment->user->name }}:</strong> {{ $comment->content }}
@@ -57,7 +57,7 @@
                                 @csrf
                                 <div class="flex gap-2">
                                     <input type="text" name="content" placeholder="Escribe un comentario..." 
-                                        class="flex-1 border-gray-300 rounded-md shadow-sm text-sm">
+                                           class="flex-1 border-gray-300 rounded-md shadow-sm text-sm">
                                     <button type="submit" class="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
                                         Comentar
                                     </button>
@@ -83,46 +83,50 @@
 
     @push('scripts')
     <script>
-        document.querySelectorAll('.reaction-btn').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const postId = this.dataset.postId;
-                const type = this.dataset.type;
-                
-                console.log('Reaccionando a post:', postId, 'con tipo:', type); // ← Debug
-                
-                try {
-                    const response = await fetch(`/posts/${postId}/react`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ type: type })
-                    });
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Script de reacciones cargado'); // Debug
+            
+            document.querySelectorAll('.reaction-btn').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const postId = this.dataset.postId;
+                    const type = this.dataset.type;
                     
-                    const data = await response.json();
-                    console.log('Respuesta:', data); // ← Debug
+                    console.log('Reaccionando a post:', postId, 'con tipo:', type);
                     
-                    // Actualizar contadores
-                    for (const [reactionType, count] of Object.entries(data.counts)) {
-                        const counter = document.querySelector(`.count-${reactionType}[data-post-id="${postId}"]`);
-                        if (counter) counter.textContent = `(${count})`;
+                    try {
+                        const response = await fetch(`/posts/${postId}/react`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ type: type })
+                        });
+                        
+                        const data = await response.json();
+                        console.log('Respuesta:', data);
+                        
+                        // Actualizar contadores
+                        for (const [reactionType, count] of Object.entries(data.counts)) {
+                            const counter = document.querySelector(`.count-${reactionType}[data-post-id="${postId}"]`);
+                            if (counter) counter.textContent = `(${count})`;
+                        }
+                        
+                        // Actualizar botón activo
+                        const container = this.parentElement;
+                        container.querySelectorAll('.reaction-btn').forEach(btn => {
+                            btn.classList.remove('bg-blue-500', 'text-white');
+                            btn.classList.add('bg-gray-200');
+                        });
+                        this.classList.remove('bg-gray-200');
+                        this.classList.add('bg-blue-500', 'text-white');
+                        
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error al reaccionar. Revisa la consola.');
                     }
-                    
-                    // Actualizar botón activo
-                    const container = this.parentElement;
-                    container.querySelectorAll('.reaction-btn').forEach(btn => {
-                        btn.classList.remove('bg-blue-500', 'text-white');
-                        btn.classList.add('bg-gray-200');
-                    });
-                    this.classList.remove('bg-gray-200');
-                    this.classList.add('bg-blue-500', 'text-white');
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error al reaccionar. Revisa la consola.');
-                }
+                });
             });
         });
     </script>
