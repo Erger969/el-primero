@@ -28,9 +28,20 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('feed', absolute: false));
     }
 
+    protected function authenticated(Request $request, $user)
+    {
+        // Redirigir según el rol
+        if ($user->role_id == 3) {  // Admin prime
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->role_id == 2) {  // Master
+            return redirect()->route('feed');
+        } else {  // Universitario (role_id = 1)
+            return redirect()->route('feed');
+        }
+    }
     /**
      * Destroy an authenticated session.
      */
