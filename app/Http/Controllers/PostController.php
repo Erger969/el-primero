@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Reaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;    //API para optimizacion de imagenes y videos
 
 class PostController extends Controller
 {
@@ -38,11 +39,46 @@ class PostController extends Controller
     }
 
     // Mostrar formulario para crear publicación
-    // public function create()
-    // {
-    //     return view('posts.create');
-    // }
+        public function create()
+        {
+            return view('posts.create');
+        }
 
+        public function store(Request $request)
+        {
+            $request->validate([
+                'title' => 'required|string|max:200',
+                'content' => 'required|string',
+                'images' => 'nullable|array|max:5',
+                'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            ]);
+
+            $imageUrls = [];
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $uploadedFile = Cloudinary::upload($image->getRealPath(), [
+                        'folder' => 'red_social_publicaciones',
+                        'transformation' => [
+                            'width' => 800,
+                            'height' => 600,
+                            'crop' => 'limit'
+                        ]
+                    ]);
+                    $imageUrls[] = $uploadedFile->getSecurePath();
+                }
+            }
+
+            $post = Post::create([
+                'user_id' => Auth::id(),
+                'title' => $request->title,
+                'content' => $request->content,
+                'images' => json_encode($imageUrls),
+                'is_hidden' => false,
+            ]);
+
+            return redirect()->route('feed')->with('success', 'Publicación creada exitosamente.');
+        }
     // // Guardar nueva publicación
     // public function store(Request $request)
     // {
