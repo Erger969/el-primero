@@ -26,17 +26,29 @@
                         <!-- Reacciones -->
                         <div class="flex gap-2 mb-4">
                             @php
-                                $reactionTypes = ['ya' => '😊', 'ahh' => '😮', 'ehh' => '🤔', 'ohh' => '😲', 'uhh' => '😅'];
+                                $reactionTypes = [
+                                    'ya' => ['emoji' => '😊', 'label' => 'Ya', 'color' => 'bg-green-500'],
+                                    'ahh' => ['emoji' => '😮', 'label' => 'Ahh', 'color' => 'bg-yellow-500'],
+                                    'ehh' => ['emoji' => '🤔', 'label' => 'Ehh', 'color' => 'bg-purple-500'],
+                                    'ohh' => ['emoji' => '😲', 'label' => 'Ohh', 'color' => 'bg-red-500'],
+                                    'uhh' => ['emoji' => '😅', 'label' => 'Uhh', 'color' => 'bg-blue-500']
+                                ];
                                 $currentReaction = $userReactions[$post->id]->type ?? null;
                             @endphp
                             
-                            @foreach($reactionTypes as $key => $emoji)
+                            @foreach($reactionTypes as $key => $reaction)
                                 <button 
-                                    class="reaction-btn px-3 py-1 rounded transition {{ $currentReaction === $key ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300' }}"
+                                    class="reaction-btn px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105
+                                        {{ $currentReaction === $key 
+                                            ? $reaction['color'] . ' text-white shadow-md' 
+                                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}"
                                     data-post-id="{{ $post->id }}"
                                     data-type="{{ $key }}">
-                                    {{ $emoji }} {{ $key }}
-                                    <span class="count-{{ $key }}">({{ $post->reactions->where('type', $key)->count() }})</span>
+                                    <span class="text-lg">{{ $reaction['emoji'] }}</span>
+                                    <span class="ml-1">{{ $reaction['label'] }}</span>
+                                    <span class="count-{{ $key }} ml-1 text-sm font-bold">
+                                        ({{ $post->reactions->where('type', $key)->count() }})
+                                    </span>
                                 </button>
                             @endforeach
                         </div>
@@ -84,7 +96,16 @@
     @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Script de reacciones cargado'); // Debug
+            console.log('Script de reacciones cargado');
+            
+            // Definir colores para cada tipo de reacción
+            const reactionColors = {
+                'ya': 'bg-green-500',
+                'ahh': 'bg-yellow-500',
+                'ehh': 'bg-purple-500',
+                'ohh': 'bg-red-500',
+                'uhh': 'bg-blue-500'
+            };
             
             document.querySelectorAll('.reaction-btn').forEach(btn => {
                 btn.addEventListener('click', async function() {
@@ -116,11 +137,14 @@
                         // Actualizar botón activo
                         const container = this.parentElement;
                         container.querySelectorAll('.reaction-btn').forEach(btn => {
-                            btn.classList.remove('bg-blue-500', 'text-white');
-                            btn.classList.add('bg-gray-200');
+                            // Remover todas las clases de color y estilo activo
+                            btn.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-red-500', 'bg-blue-500', 'text-white', 'shadow-md');
+                            btn.classList.add('bg-gray-200', 'text-gray-700');
                         });
-                        this.classList.remove('bg-gray-200');
-                        this.classList.add('bg-blue-500', 'text-white');
+                        
+                        // Agregar clases al botón activo
+                        this.classList.remove('bg-gray-200', 'text-gray-700');
+                        this.classList.add(reactionColors[type], 'text-white', 'shadow-md');
                         
                     } catch (error) {
                         console.error('Error:', error);
