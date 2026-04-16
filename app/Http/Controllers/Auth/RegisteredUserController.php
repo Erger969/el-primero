@@ -32,18 +32,18 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'lastname' => ['required', 'string', 'max:255'],  // ← Agregar
+            'lastname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'career_id' => ['required', 'exists:careers,id'],  // ← Agregar
+            'career_id' => ['required', 'exists:careers,id'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
-            'lastname' => $request->lastname,  // ← Agregar
+            'lastname' => $request->lastname,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'career_id' => $request->career_id,  // ← Agregar
+            'career_id' => $request->career_id,
             'role_id' => 1,  // Rol universitario por defecto
         ]);
 
