@@ -12,6 +12,8 @@ use App\Http\Controllers\Auth\CustomForgotPasswordController;  // ← Agregar
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
+    // Route::get('/', [App\Http\Controllers\PublicController::class, 'index'])    //ruta principal para visitantes index definido
+    //     ->name('home');
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 

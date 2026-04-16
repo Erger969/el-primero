@@ -1,0 +1,361 @@
+CRONOGRAMA DE DESARROLLO - PROYECTO RED SOCIAL UNIVERSITARIA
+
+ PUNTO 1: CONFIGURACIÓN INICIAL DEL PROYECTO
+1.1 Creación del proyecto Laravel
+• [ ] 1.1.1 Ejecutar composer create-project laravel/laravel red-social-universitaria
+• [ ] 1.1.2 Verificar que Laravel 12 esté instalado (php artisan --version)
+• [ ] 1.1.3 Configurar archivo .env con conexión a XAMPP (MySQL)
+• [ ] 1.1.4 Ejecutar php artisan serve y probar que la página de bienvenidafuncione
+
+1.2 Instalación de paquetes necesarios
+• [ ] 1.2.1 Instalar Laravel Breeze (autenticación): composer require laravel/breeze--dev
+• [ ] 1.2.2 Ejecutar php artisan breeze:install blade
+• [ ] 1.2.3 Instalar npm install y npm run build
+• [ ] 1.2.4 Instalar paquete para Cloudinary: composer require cloudinarylabs/cloudinary-laravel
+• [ ] 1.2.5 Instalar Spatie Laravel Permission (opcional, pero útil para roles): composer require spatie/laravel-permission
+1.3 Configuración de Git y GitHub
+• [ ] 1.3.1 Inicializar Git: git init
+• [ ] 1.3.2 Conectar al repositorio de tu compañero (colaborador)
+• [ ] 1.3.3 Crear rama develop para desarrollo conjunto
+• [ ] 1.3.4 Configurar .gitignore adecuado (incluir .env, node_modules, storage)
+ PUNTO 2: BASE DE DATOS Y MODELOS
+2.1 Creación de migraciones (orden correcto)
+• [ ] 2.1.1 Migrar tabla careers (carreras)
+• [ ] 2.1.2 Modificar migración users agregando
+campos: lastname, foto_perfil, descripcion, career_id, role_id
+• [ ] 2.1.3 Migrar tabla posts (con images como JSON, is_hidden, hidden_until)
+• [ ] 2.1.4 Migrar tabla comments
+• [ ] 2.1.5 Migrar tabla reactions (con type ENUM y unique compuesto)
+• [ ] 2.1.6 Migrar tabla reports (con category ENUM, status)
+Proyecto Universitario – Laravel 12
+• [ ] 2.1.7 Migrar tabla post_modifications
+• [ ] 2.1.8 Migrar tabla master_activities
+• [ ] 2.1.9 Migrar tabla master_requests
+• [ ] 2.1.10 Migrar tabla password_reset_codes
+2.2 Ejecutar migraciones
+• [ ] 2.2.1 Ejecutar php artisan migrate
+• [ ] 2.2.2 Verificar que todas las tablas se crearon en phpMyAdmin
+2.3 Creación de Modelos y relaciones
+• [ ] 2.3.1 Crear modelo Career con relación hasMany(User::class)
+• [ ] 2.3.2 Modificar modelo User con relaciones y fillable
+• [ ] 2.3.3 Crear modelo Post con relaciones y casts para images (array)
+• [ ] 2.3.4 Crear modelo Comment
+• [ ] 2.3.5 Crear modelo Reaction
+• [ ] 2.3.6 Crear modelo Report
+• [ ] 2.3.7 Crear modelo PostModification
+• [ ] 2.3.8 Crear modelo MasterActivity
+• [ ] 2.3.9 Crear modelo MasterRequest
+• [ ] 2.3.10 Crear modelo PasswordResetCode
+2.4 Seeders (datos de prueba)
+• [ ] 2.4.1 Crear CareerSeeder con carreras predeterminadas (5-10 carreras)
+• [ ] 2.4.2 Crear RoleSeeder (3 roles: Universitario, Master, Admin)
+• [ ] 2.4.3 Crear AdminUserSeeder (crear admin por
+defecto: admin@universidad.com / password)
+• [ ] 2.4.4 Crear DatabaseSeeder que llame a todos los seeders
+• [ ] 2.4.5 Ejecutar php artisan db:seed
+Proyecto Universitario – Laravel 12
+ PUNTO 3: SISTEMA DE AUTENTICACIÓN Y ROLES
+3.1 Personalizar autenticación Breeze
+• [ ] 3.1.1 Modificar RegisterController para
+guardar name, lastname, email, password, career_id
+• [ ] 3.1.2 Agregar role_id = 1 por defecto al registrarse
+• [ ] 3.1.3 Modificar vistas de auth/login.blade.php según mockups
+• [ ] 3.1.4 Modificar vistas de auth/register.blade.php (agregar select de carreras)
+• [ ] 3.1.5 Probar registro y login de usuario normal
+3.2 Sistema de recuperación de contraseña (código numérico)
+• [ ] 3.2.1 Crear controlador CustomForgotPasswordController
+• [ ] 3.2.2 Implementar método sendResetCode (genera código 6 dígitos, guarda
+en password_reset_codes)
+• [ ] 3.2.3 Configurar envío de correo (usar Mailtrap en desarrollo)
+• [ ] 3.2.4 Crear vista auth/forgot-password.blade.php
+• [ ] 3.2.5 Crear controlador CustomResetPasswordController
+• [ ] 3.2.6 Implementar verificación de código y cambio de contraseña
+• [ ] 3.2.7 Probar flujo completo: solicitar código → recibir email → cambiar
+contraseña
+3.3 Middleware para roles
+• [ ] 3.3.1 Crear RoleMiddleware (como te mostré en el Punto 4)
+• [ ] 3.3.2 Registrar middleware en bootstrap/app.php
+• [ ] 3.3.3 Probar que rutas protegidas por rol funcionan
+(ej. /admin/dashboard solo accesible por admin)
+Proyecto Universitario – Laravel 12
+ PUNTO 4: PÁGINAS PÚBLICAS Y FEED
+4.1 Página principal pública (home)
+• [ ] 4.1.1 Crear PublicController con método index()
+• [ ] 4.1.2 Consultar publicaciones (solo las no ocultas, orden descendente)
+• [ ] 4.1.3 Crear vista home.blade.php (según mockups: carrusel + grid 3x2)
+• [ ] 4.1.4 Implementar carrusel con top 5 tendencias (usar datos reales o
+estáticos)
+• [ ] 4.1.5 Implementar grid de publicaciones con paginación (6 por página)
+• [ ] 4.1.6 Agregar enlace a login/registro en el header
+• [ ] 4.1.7 Agregar pie de página (redes sociales, desarrollo)
+4.2 Feed principal (logueados)
+• [ ] 4.2.1 Crear método feed() en PostController
+• [ ] 4.2.2 Consultar publicaciones + datos de autor + reacciones del usuario
+logueado
+• [ ] 4.2.3 Crear vista feed.blade.php (similar a home pero con interacciones)
+• [ ] 4.2.4 Agregar botón "Nueva publicación" en feed
+• [ ] 4.2.5 Implementar filtros básicos (recientes/tendencias) - inicialmente
+estático
+• [ ] 4.2.6 Probar que el feed solo muestra publicaciones no ocultas
+ PUNTO 5: CRUD DE PUBLICACIONES E IMÁGENES
+5.1 Crear publicación
+• [ ] 5.1.1 Crear método create() y store() en PostController
+• [ ] 5.1.2 Crear vista posts/create.blade.php (formulario con título, contenido,
+subida imágenes)
+• [ ] 5.1.3 Validar: título requerido, contenido requerido, imágenes máx 5, cada
+una ≤2MB, formatos JPG/PNG/WEBP
+• [ ] 5.1.4 Configurar Cloudinary (crear cuenta gratis, obtener credenciales)
+• [ ] 5.1.5 Implementar subida de imágenes a Cloudinary (guardar URLs en array)
+• [ ] 5.1.6 Guardar publicación en posts con user_id = auth()->id()
+• [ ] 5.1.7 Probar subida con 1, 3 y 5 imágenes
+Proyecto Universitario – Laravel 12
+5.2 Ver detalle de publicación
+• [ ] 5.2.1 Crear método show() en PostController
+• [ ] 5.2.2 Crear vista posts/show.blade.php (muestra publicación completa +
+comentarios)
+• [ ] 5.2.3 Cargar relaciones: autor, comentarios (con sus autores), reacciones del
+usuario
+5.3 Editar publicación (con auditoría)
+• [ ] 5.3.1 Crear método edit() y update() en PostController
+• [ ] 5.3.2 Verificar que el usuario es el autor (policy o authorize)
+• [ ] 5.3.3 Antes de actualizar, guardar valores anteriores en post_modifications
+• [ ] 5.3.4 Actualizar publicación con nuevos valores
+• [ ] 5.3.5 Probar que se guarda el historial de cambios
+5.4 Eliminar publicación
+• [ ] 5.4.1 Crear método destroy() en PostController
+• [ ] 5.4.2 Verificar permisos (autor o admin)
+• [ ] 5.4.3 Eliminar publicación (y comentarios/reacciones por CASCADE)
+• [ ] 5.4.4 Probar eliminación
+Proyecto Universitario – Laravel 12
+ PUNTO 6: COMENTARIOS Y REACCIONES
+6.1 Comentarios
+• [ ] 6.1.1 Crear método store() en CommentController
+• [ ] 6.1.2 Validar que content no esté vacío
+• [ ] 6.1.3 Guardar comentario con user_id y post_id
+• [ ] 6.1.4 En vista posts/show.blade.php mostrar lista de comentarios
+• [ ] 6.1.5 Agregar formulario para nuevo comentario
+• [ ] 6.1.6 (Opcional) Implementar eliminación de comentario propio
+• [ ] 6.1.7 Probar comentarios en publicaciones
+6.2 Reacciones (5 tipos personalizados)
+• [ ] 6.2.1 Crear método toggle() en ReactionController
+• [ ] 6.2.2 Recibir post_id y type (ya, ahh, ehh, ohh, uhh)
+• [ ] 6.2.3 Lógica: si ya existe reacción del usuario, actualizar tipo; si no, crear
+nueva
+• [ ] 6.2.4 Devolver respuesta JSON con conteo actualizado de cada tipo
+• [ ] 6.2.5 En feed.blade.php agregar botones de reacción con AJAX (JavaScript)
+• [ ] 6.2.6 Mostrar conteo de cada reacción debajo de cada publicación
+• [ ] 6.2.7 Probar cambiar de reacción y ver que se actualiza
+ PUNTO 7: PERFILES DE USUARIO
+7.1 Ver perfil (público y privado)
+• [ ] 7.1.1 Crear método show() en ProfileController
+• [ ] 7.1.2 Mostrar: nombre, apellidos, foto de perfil, descripción, carrera, fecha
+de registro
+• [ ] 7.1.3 Listar publicaciones del usuario (con paginación)
+• [ ] 7.1.4 Si es perfil propio, mostrar botón "Editar perfil"
+• [ ] 7.1.5 Si es perfil ajeno, mostrar botón "Reportar usuario" (similar a reportar
+publicación)
+• [ ] 7.1.6 Crear vista profile/show.blade.php
+Proyecto Universitario – Laravel 12
+7.2 Editar perfil
+• [ ] 7.2.1 Crear método edit() y update() en ProfileController
+• [ ] 7.2.2 Crear vista profile/edit.blade.php (formulario para descripción)
+• [ ] 7.2.3 Implementar subida de foto de perfil a Cloudinary
+(método uploadPhoto())
+• [ ] 7.2.4 Validar imagen: 2MB máx, formatos permitidos
+• [ ] 7.2.5 Probar actualización de perfil
+ PUNTO 8: DASHBOARD DEL ADMINISTRADOR
+8.1 Estructura base del dashboard
+• [ ] 8.1.1 Crear DashboardController con método index()
+• [ ] 8.1.2 Crear layout admin/layouts/app.blade.php (sidebar + header)
+• [ ] 8.1.3 Crear vista admin/dashboard/index.blade.php
+• [ ] 8.1.4 Implementar middleware role:admin en todas las rutas admin
+8.2 Métricas principales
+• [ ] 8.2.1 Contar publicaciones de hoy, esta semana, este mes
+• [ ] 8.2.2 Obtener top 5 publicaciones con más comentarios
+• [ ] 8.2.3 Obtener top 5 publicaciones con más reacciones (suma de todos los tp)
+• [ ] 8.2.4 Obtener top 5 usuarios que más publican
+• [ ] 8.2.5 Listar usuarios agrupados por carrera (con conteos)
+• [ ] 8.2.6 Mostrar contador de reportes pendientes y solicitudes de master
+8.3 CRUD de carreras
+• [ ] 8.3.1 Crear CareerController con métodos index, create, store, edit, update, d
+• [ ] 8.3.2 Crear vistas en admin/careers/
+• [ ] 8.3.3 Implementar eliminación con verificación de usuarios asociados
+• [ ] 8.3.4 Probar CRUD completo
+8.4 CRUD de usuarios (admin)
+• [ ] 8.4.1 Crear UserController (admin) con index, edit, update, destroy
+• [ ] 8.4.2 Implementar filtros por rol y carrera
+• [ ] 8.4.3 Agregar acción "Suspender" (cambiar role_id a 4)
+• [ ] 8.4.4 Agregar acción "Restaurar" (volver a role_id 1)
+• [ ] 8.4.5 Crear vistas en admin/users/
+Proyecto Universitario – Laravel 12
+8.5 CRUD de publicaciones (admin)
+• [ ] 8.5.1 Crear AdminPostController con index, edit, update, destroy
+• [ ] 8.5.2 Listar todas las publicaciones (incluyendo ocultas)
+• [ ] 8.5.3 Agregar acciones: ocultar, mostrar, editar, eliminar
+• [ ] 8.5.4 Crear vistas en admin/posts/
+ PUNTO 9: REPORTES Y MODERACIÓN
+9.1 Sistema de reportes (usuario)
+• [ ] 9.1.1 Crear método store() en ReportController
+• [ ] 9.1.2 Validar que el usuario no haya reportado ya esa publicación
+• [ ] 9.1.3 Guardar reporte con categoría y status='pending'
+• [ ] 9.1.4 Crear vista modal o formulario para reportar (con categorías)
+• [ ] 9.1.5 Probar reportar publicación
+9.2 Lógica de auto-ocultamiento (25+ reportes)
+• [ ] 9.2.1 En el método store() de ReportController, después de guardar, contar
+reportes de la publicación
+• [ ] 9.2.2 Si count >= 25, actualizar posts.is_hidden = true y posts.hidden_until =
+now + 2 days
+• [ ] 9.2.3 Probar con 25 reportes (puedes hacerlo manualmente desde tinker)
+9.3 Bandeja de reportes (admin)
+• [ ] 9.3.1 Crear AdminReportController con método index()
+• [ ] 9.3.2 Listar reportes pendientes (con publicación, usuario reportante,
+categoría)
+• [ ] 9.3.3 Implementar acciones:
+o resolve(): marca reporte como resuelto
+o reject(): rechaza reporte
+o hidePost(): oculta la publicación
+• [ ] 9.3.4 Crear vista admin/reports/index.blade.php
+• [ ] 9.3.5 Probar flujo completo: reportar → admin ve → admin oculta
+publicación
+Proyecto Universitario – Laravel 12
+9.4 Notificación al autor (cuando admin o master actúa)
+• [ ] 9.4.1 Al ocultar publicación, registrar en una tabla notifications (o usar sesión
+flash)
+• [ ] 9.4.2 Mostrar mensaje al autor cuando inicia sesión o recarga
+• [ ] 9.4.3 (Opcional) Implementar sistema básico de notificaciones en BD
+ PUNTO 10: PERFIL MASTER Y SOLICITUDES
+10.1 Solicitud de ascenso a Master (usuario)
+• [ ] 10.1.1 Agregar botón "Solicitar ser Master" en perfil propio (solo si role_id=1)
+• [ ] 10.1.2 Crear método requestMaster() en ProfileController
+• [ ] 10.1.3 Verificar que no tenga solicitud pendiente
+• [ ] 10.1.4 Guardar en master_requests con status='pending'
+• [ ] 10.1.5 Probar solicitud
+10.2 Aprobar/rechazar solicitudes (admin)
+• [ ] 10.2.1 Crear AdminRequestController con método index()
+• [ ] 10.2.2 Listar solicitudes pendientes
+• [ ] 10.2.3 Implementar approve(): cambia role_id del usuario a 2, actualiza
+solicitud
+• [ ] 10.2.4 Implementar reject(): actualiza solicitud con motivo
+• [ ] 10.2.5 Crear vista admin/requests/index.blade.php
+• [ ] 10.2.6 Probar flujo: usuario solicita → admin aprueba → usuario ahora es
+master
+10.3 Permisos de Master (ocultar publicaciones, 3 veces/día)
+• [ ] 10.3.1 Crear HideController (en carpeta Master)
+• [ ] 10.3.2 Implementar método toggle()
+• [ ] 10.3.3 Verificar que el usuario es master
+• [ ] 10.3.4 Contar cuántos ocultamientos hizo hoy
+en master_activities (action='hide')
+• [ ] 10.3.5 Si < 3: cambiar posts.is_hidden y guardar en master_activities
+• [ ] 10.3.6 Si ya tiene 3: retornar error "Límite diario alcanzado"
+• [ ] 10.3.7 Agregar botón "Ocultar/Mostrar" en feed para masters
+• [ ] 10.3.8 Probar ocultar 3 veces, fallar en la cuarta
+Proyecto Universitario – Laravel 12
+10.4 Auditoría de actividades de masters (admin)
+• [ ] 10.4.1 Crear MasterActivityController con método index()
+• [ ] 10.4.2 Listar todas las actividades (master, publicación, acción, fecha)
+• [ ] 10.4.3 Implementar revokePermissions(): cambia role_id del master a 1
+• [ ] 10.4.4 Crear vista admin/master-activity/index.blade.php
+• [ ] 10.4.5 Probar revocación de permisos
+ PUNTO 11: TENDENCIAS Y FILTROS AVANZADOS
+11.1 Sistema de tendencias (actualización cada hora)
+• [ ] 11.1.1 Crear comando php artisan make:command UpdateTrendingPosts
+• [ ] 11.1.2 En el comando, calcular top 5 publicaciones con más (comentarios +
+reacciones) de la última semana
+• [ ] 11.1.3 Guardar resultados en caché o en tabla trending_posts
+• [ ] 11.1.4 Programar comando cada hora (Laravel Scheduler)
+• [ ] 11.1.5 En el feed/home, mostrar las tendencias desde caché
+11.2 Filtros en el feed
+• [ ] 11.2.1 Agregar barra de filtros en feed.blade.php:
+o Por carrera (select)
+o Por tipo (deporte, evento, incidente, etc.) - si agregas
+campo type en posts
+o Por fecha (hoy, última semana, personalizada)
+o Más comentados / Más reaccionados
+• [ ] 11.2.2 Modificar método feed() para aplicar filtros vía query string
+• [ ] 11.2.3 Implementar lógica de filtros con Eloquent (usar scopes)
+• [ ] 11.2.4 Probar cada filtro individualmente y combinados
+11.3 Paginación y scroll
+• [ ] 11.3.1 Usar ->paginate(10) en feed
+• [ ] 11.3.2 Agregar enlaces de paginación con {{ $posts->links() }}
+• [ ] 11.3.3 (Opcional) Implementar infinite scroll con JavaScript
+Proyecto Universitario – Laravel 12
+ PUNTO 12: DISEÑO Y FRONTEND (CSS/JS)
+12.1 Layout principal
+• [ ] 12.1.1 Crear layout layouts/app.blade.php con navbar responsive
+• [ ] 12.1.2 Agregar enlaces: Inicio, Feed, Perfil (si logueado), Admin (si es admin)
+• [ ] 12.1.3 Usar Tailwind CSS (viene con Breeze) o Bootstrap (tu elección)
+12.2 Estilos específicos
+• [ ] 12.2.1 Diseñar tarjetas de publicaciones (imagen, título, fecha, reacciones)
+• [ ] 12.2.2 Estilizar formularios (login, registro, crear publicación)
+• [ ] 12.2.3 Estilizar dashboard admin (tarjetas de métricas, tablas)
+• [ ] 12.2.4 Hacer que el diseño sea responsive (móvil/tablet/escritorio)
+• [ ] 12.2.5 Seguir los mockups que me pasaste (carrusel, grid 3x2, etc.)
+12.3 JavaScript (AJAX para reacciones)
+• [ ] 12.3.1 Crear archivo reactions.js
+• [ ] 12.3.2 Manejar clics en botones de reacción sin recargar
+• [ ] 12.3.3 Enviar petición POST a /posts/{post}/react con fetch/axios
+• [ ] 12.3.4 Actualizar contadores en la UI con la respuesta JSON
+• [ ] 12.3.5 Probar que funciona en tiempo real
+Proyecto Universitario – Laravel 12
+ PUNTO 13: CONFIGURACIÓN PARA PRODUCCIÓN
+13.1 Preparar entorno de producción (Railway)
+• [ ] 13.1.1 Crear cuenta en Railway.app
+• [ ] 13.1.2 Conectar repositorio de GitHub
+• [ ] 13.1.3 Configurar variables de entorno en Railway (APP_KEY, DB_,
+CLOUDINARY_)
+• [ ] 13.1.4 Agregar Procfile o railway.json para Laravel
+• [ ] 13.1.5 Configurar base de datos MySQL en Railway
+• [ ] 13.1.6 Ejecutar php artisan migrate --force en producción
+13.2 Configuración de Cloudinary en producción
+• [ ] 13.2.1 Usar variables de entorno para credenciales
+• [ ] 13.2.2 Verificar que las subidas funcionan en Railway
+13.3 Configuración de correo (producción)
+• [ ] 13.3.1 Usar SMTP real (Gmail, SendGrid, o Mailgun)
+• [ ] 13.3.2 Probar recuperación de contraseña en producción
+13.4 Optimizaciones finales
+• [ ] 13.4.1 Ejecutar php artisan config:cache
+• [ ] 13.4.2 Ejecutar php artisan route:cache
+• [ ] 13.4.3 Ejecutar php artisan view:cache
+• [ ] 13.4.4 Configurar scheduler para comando de tendencias (cron job en
+Railway)
+Proyecto Universitario – Laravel 12
+ PUNTO 14: PRUEBAS Y DEPURACIÓN
+14.1 Pruebas funcionales (manuales)
+• [ ] 14.1.1 Probar registro con diferentes carreras
+• [ ] 14.1.2 Probar login/logout
+• [ ] 14.1.3 Probar recuperación de contraseña
+• [ ] 14.1.4 Probar crear publicación con 0, 1, 3, 5 imágenes
+• [ ] 14.1.5 Probar editar publicación (verificar auditoría)
+• [ ] 14.1.6 Probar comentar y eliminar comentario
+• [ ] 14.1.7 Probar reacciones (5 tipos, cambiar reacción)
+• [ ] 14.1.8 Probar reportar publicación (llegue al admin)
+• [ ] 14.1.9 Probar auto-ocultamiento con 25 reportes
+• [ ] 14.1.10 Probar solicitud y aprobación/rechazo de master
+• [ ] 14.1.11 Probar ocultar publicación como master (3 veces/día)
+• [ ] 14.1.12 Probar revocar permisos de master desde admin
+• [ ] 14.1.13 Probar todos los CRUDs del admin
+14.2 Pruebas de seguridad
+• [ ] 14.2.1 Intentar acceder a rutas admin sin ser admin (debe dar 403)
+• [ ] 14.2.2 Intentar editar publicación ajena (debe fallar)
+• [ ] 14.2.3 Intentar reportar misma publicación dos veces (debe fallar)
+• [ ] 14.2.4 Verificar que las contraseñas están hasheadas (bcrypt)
+14.3 Pruebas de rendimiento
+• [ ] 14.3.1 Probar feed con 100+ publicaciones (paginación)
+• [ ] 14.3.2 Probar subida de 5 imágenes simultáneas (tiempo de respuesta)
+• [ ] 14.3.3 Verificar que las consultas SQL son eficientes (usar Laravel Debugbar)
+ PUNTO 15: DOCUMENTACIÓN Y ENTREGA
+15.1 Documentación técnica
+• [ ] 15.1.1 Escribir README.md con instrucciones de instalación
+• [ ] 15.1.2 Incluir comandos para migrar y seedear
+• [ ] 15.1.3 Documentar variables de entorno necesarias
+• [ ] 15.1.4 Agregar diagrama de base de datos (imagen)
+Proyecto Universitario – Laravel 12
+15.2 Manual de usuario
+• [ ] 15.2.1 Escribir guía para usuarios normales (registro, publicar, comentar)
+• [ ] 15.2.2 Escribir guía para masters (cómo ocultar publicaciones)
+• [ ] 15.2.3 Escribir guía para admin (dashboard, reportes, solicitudes)
+15.3 Entrega final
+• [ ] 15.3.1 Subir a GitHub con rama main finalizada
+• [ ] 15.3.2 Desplegar en Railway y verificar que todo funciona
+• [ ] 15.3.3 Enviar enlace de producción al profesor/equipo
+• [ ] 15.3.4 Hacer video demostración (opcional)
