@@ -1,6 +1,7 @@
 CRONOGRAMA DE DESARROLLO - PROYECTO RED SOCIAL UNIVERSITARIA
 
  PUNTO 1: CONFIGURACIÓN INICIAL DEL PROYECTO
+
 1.1 Creación del proyecto Laravel
 • [ ] 1.1.1 Ejecutar composer create-project laravel/laravel red-social-universitaria
 • [ ] 1.1.2 Verificar que Laravel 12 esté instalado (php artisan --version)
@@ -13,28 +14,31 @@ CRONOGRAMA DE DESARROLLO - PROYECTO RED SOCIAL UNIVERSITARIA
 • [ ] 1.2.3 Instalar npm install y npm run build
 • [ ] 1.2.4 Instalar paquete para Cloudinary: composer require cloudinarylabs/cloudinary-laravel
 • [ ] 1.2.5 Instalar Spatie Laravel Permission (opcional, pero útil para roles): composer require spatie/laravel-permission
+
 1.3 Configuración de Git y GitHub
 • [ ] 1.3.1 Inicializar Git: git init
 • [ ] 1.3.2 Conectar al repositorio de tu compañero (colaborador)
 • [ ] 1.3.3 Crear rama develop para desarrollo conjunto
 • [ ] 1.3.4 Configurar .gitignore adecuado (incluir .env, node_modules, storage)
+ 
  PUNTO 2: BASE DE DATOS Y MODELOS
+
 2.1 Creación de migraciones (orden correcto)
 • [ ] 2.1.1 Migrar tabla careers (carreras)
-• [ ] 2.1.2 Modificar migración users agregando
-campos: lastname, foto_perfil, descripcion, career_id, role_id
+• [ ] 2.1.2 Modificar migración users agregando campos: lastname, foto_perfil, descripcion, career_id, role_id
 • [ ] 2.1.3 Migrar tabla posts (con images como JSON, is_hidden, hidden_until)
 • [ ] 2.1.4 Migrar tabla comments
 • [ ] 2.1.5 Migrar tabla reactions (con type ENUM y unique compuesto)
-• [ ] 2.1.6 Migrar tabla reports (con category ENUM, status)
-Proyecto Universitario – Laravel 12
+• [ ] 2.1.6 Migrar tabla reports (con category ENUM, status) 
 • [ ] 2.1.7 Migrar tabla post_modifications
 • [ ] 2.1.8 Migrar tabla master_activities
 • [ ] 2.1.9 Migrar tabla master_requests
 • [ ] 2.1.10 Migrar tabla password_reset_codes
+
 2.2 Ejecutar migraciones
 • [ ] 2.2.1 Ejecutar php artisan migrate
 • [ ] 2.2.2 Verificar que todas las tablas se crearon en phpMyAdmin
+
 2.3 Creación de Modelos y relaciones
 • [ ] 2.3.1 Crear modelo Career con relación hasMany(User::class)
 • [ ] 2.3.2 Modificar modelo User con relaciones y fillable
@@ -46,58 +50,57 @@ Proyecto Universitario – Laravel 12
 • [ ] 2.3.8 Crear modelo MasterActivity
 • [ ] 2.3.9 Crear modelo MasterRequest
 • [ ] 2.3.10 Crear modelo PasswordResetCode
+
 2.4 Seeders (datos de prueba)
 • [ ] 2.4.1 Crear CareerSeeder con carreras predeterminadas (5-10 carreras)
 • [ ] 2.4.2 Crear RoleSeeder (3 roles: Universitario, Master, Admin)
-• [ ] 2.4.3 Crear AdminUserSeeder (crear admin por
-defecto: admin@universidad.com / password)
+• [ ] 2.4.3 Crear AdminUserSeeder (crear admin por defecto: admin@universidad.com / password)
 • [ ] 2.4.4 Crear DatabaseSeeder que llame a todos los seeders
-• [ ] 2.4.5 Ejecutar php artisan db:seed
-Proyecto Universitario – Laravel 12
+• [ ] 2.4.5 Ejecutar php artisan db:seed 
  PUNTO 3: SISTEMA DE AUTENTICACIÓN Y ROLES
+
 3.1 Personalizar autenticación Breeze
-• [ ] 3.1.1 Modificar RegisterController para
-guardar name, lastname, email, password, career_id
+• [ ] 3.1.1 Modificar RegisterController para guardar name, lastname, email, password, career_id
 • [ ] 3.1.2 Agregar role_id = 1 por defecto al registrarse
 • [ ] 3.1.3 Modificar vistas de auth/login.blade.php según mockups
 • [ ] 3.1.4 Modificar vistas de auth/register.blade.php (agregar select de carreras)
 • [ ] 3.1.5 Probar registro y login de usuario normal
+
 3.2 Sistema de recuperación de contraseña (código numérico)
 • [ ] 3.2.1 Crear controlador CustomForgotPasswordController
-• [ ] 3.2.2 Implementar método sendResetCode (genera código 6 dígitos, guarda
-en password_reset_codes)
+• [ ] 3.2.2 Implementar método sendResetCode (genera código 6 dígitos, guarda en password_reset_codes)
 • [ ] 3.2.3 Configurar envío de correo (usar Mailtrap en desarrollo)
 • [ ] 3.2.4 Crear vista auth/forgot-password.blade.php
 • [ ] 3.2.5 Crear controlador CustomResetPasswordController
 • [ ] 3.2.6 Implementar verificación de código y cambio de contraseña
-• [ ] 3.2.7 Probar flujo completo: solicitar código → recibir email → cambiar
-contraseña
+• [ ] 3.2.7 Probar flujo completo: solicitar código → recibir email → cambiar contraseña
+
 3.3 Middleware para roles
 • [ ] 3.3.1 Crear RoleMiddleware (como te mostré en el Punto 4)
 • [ ] 3.3.2 Registrar middleware en bootstrap/app.php
-• [ ] 3.3.3 Probar que rutas protegidas por rol funcionan
-(ej. /admin/dashboard solo accesible por admin)
-Proyecto Universitario – Laravel 12
+• [ ] 3.3.3 Probar que rutas protegidas por rol funcionan (ej. /admin/dashboard solo accesible por admin)
+
  PUNTO 4: PÁGINAS PÚBLICAS Y FEED
+
 4.1 Página principal pública (home)
 • [ ] 4.1.1 Crear PublicController con método index()
 • [ ] 4.1.2 Consultar publicaciones (solo las no ocultas, orden descendente)
 • [ ] 4.1.3 Crear vista home.blade.php (según mockups: carrusel + grid 3x2)
-• [ ] 4.1.4 Implementar carrusel con top 5 tendencias (usar datos reales o
-estáticos)
+• [ ] 4.1.4 Implementar carrusel con top 5 tendencias (usar datos reales o estáticos)
 • [ ] 4.1.5 Implementar grid de publicaciones con paginación (6 por página)
 • [ ] 4.1.6 Agregar enlace a login/registro en el header
 • [ ] 4.1.7 Agregar pie de página (redes sociales, desarrollo)
+
 4.2 Feed principal (logueados)
 • [ ] 4.2.1 Crear método feed() en PostController
-• [ ] 4.2.2 Consultar publicaciones + datos de autor + reacciones del usuario
-logueado
+• [ ] 4.2.2 Consultar publicaciones + datos de autor + reacciones del usuario logueado
 • [ ] 4.2.3 Crear vista feed.blade.php (similar a home pero con interacciones)
 • [ ] 4.2.4 Agregar botón "Nueva publicación" en feed
-• [ ] 4.2.5 Implementar filtros básicos (recientes/tendencias) - inicialmente
-estático
+• [ ] 4.2.5 Implementar filtros básicos (recientes/tendencias) - inicialmente estático
 • [ ] 4.2.6 Probar que el feed solo muestra publicaciones no ocultas
+
  PUNTO 5: CRUD DE PUBLICACIONES E IMÁGENES
+ 
 5.1 Crear publicación
 • [ ] 5.1.1 Crear método create() y store() en PostController
 • [ ] 5.1.2 Crear vista posts/create.blade.php (formulario con título, contenido,

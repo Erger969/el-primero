@@ -7,6 +7,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased">
+    <!-- DEBUG: Verificar si hay posts -->
+    <div style="background: yellow; padding: 10px; margin: 10px;">
+        <strong>Debug:</strong> 
+        Total posts: {{ $posts->total() }} | 
+        Trending: {{ $trendingPosts->count() }}
+    </div>
     <div class="min-h-screen bg-gray-100">
         <!-- Navbar -->
         <nav class="bg-white shadow">
