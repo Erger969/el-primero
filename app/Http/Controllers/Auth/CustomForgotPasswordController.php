@@ -23,10 +23,16 @@ class CustomForgotPasswordController extends Controller
             'email' => 'required|email|exists:users,email',
         ]);
 
+        // 🔍 LOG: Verificar si llegó aquí
+        \Log::info('sendResetCode ejecutado para email: ' . $request->email);
+
         $user = User::where('email', $request->email)->first();
 
         // Generar código de 6 dígitos
         $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        // 🔍 LOG: Ver código generado
+        \Log::info('Código generado: ' . $code);
 
         // Guardar en la base de datos
         PasswordResetCode::create([
@@ -36,11 +42,19 @@ class CustomForgotPasswordController extends Controller
             'used' => false,
         ]);
 
-        // Enviar correo (usando Mailtrap en desarrollo)
-        Mail::send('emails.reset-code', ['code' => $code, 'user' => $user], function ($message) use ($user) {
-            $message->to($user->email)
-                    ->subject('Código de recuperación de contraseña');
-        });
+        // 🔍 LOG: Verificar si se guardó
+        \Log::info('Código guardado en BD');
+
+        // Enviar correo
+        try {
+            Mail::send('emails.reset-code', ['code' => $code, 'user' => $user], function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Código de recuperación de contraseña');
+            });
+            \Log::info('Correo enviado exitosamente');
+        } catch (\Exception $e) {
+            \Log::error('Error al enviar correo: ' . $e->getMessage());
+        }
 
         return redirect()->route('password.reset.form')->with('success', 'Se ha enviado un código de 6 dígitos a tu correo electrónico.');
     }
