@@ -45,11 +45,8 @@ Route::get('/admin-test', function () {
     return 'Eres administrador';
 })->middleware(['auth', 'role:admin']);
 
-// Rutas para administrador (protegidas)
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 });
 
 require __DIR__.'/auth.php';

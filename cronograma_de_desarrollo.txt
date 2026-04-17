@@ -188,12 +188,12 @@ una ≤2MB, formatos JPG/PNG/WEBP
 • [ ] 8.4.3 Agregar acción "Suspender" (cambiar role_id a 4)
 • [ ] 8.4.4 Agregar acción "Restaurar" (volver a role_id 1)
 • [ ] 8.4.5 Crear vistas en admin/users/
-Proyecto Universitario – Laravel 12
 8.5 CRUD de publicaciones (admin)
 • [ ] 8.5.1 Crear AdminPostController con index, edit, update, destroy
 • [ ] 8.5.2 Listar todas las publicaciones (incluyendo ocultas)
 • [ ] 8.5.3 Agregar acciones: ocultar, mostrar, editar, eliminar
 • [ ] 8.5.4 Crear vistas en admin/posts/
+
  PUNTO 9: REPORTES Y MODERACIÓN
 9.1 Sistema de reportes (usuario)
 • [ ] 9.1.1 Crear método store() en ReportController
