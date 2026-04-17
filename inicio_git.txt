@@ -63,3 +63,10 @@ php artisan make:migration create_password_reset_codes_table
 
 #ingresar datos a las tablas 
 php artisan db:seed
+
+#instalar paquetes de Cloudinary API para imagenes del proyecto
+composer require cloudinary/cloudinary_php
+
+composer dump-autoload
+php artisan config:clear
+php artisan cache:clear
