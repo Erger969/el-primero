@@ -19,7 +19,9 @@
         </div>
 
         <!-- Título y contenido -->
-        <h2 class="text-xl font-bold mt-4 mb-2">{{ $post->title }}</h2>
+        <a href="{{ route('posts.show', $post) }}">
+            <h2 class="text-xl font-bold mt-4 mb-2 hover:text-blue-600">{{ $post->title }}</h2>
+        </a>
         <p class="text-gray-700 mb-4">{{ $post->content }}</p>
 
         <!-- Imágenes (si tiene) -->
@@ -28,7 +30,7 @@
             @if(is_array($images) && count($images) > 0)
                 <div class="grid grid-cols-2 gap-2 mb-4">
                     @foreach($images as $image)
-                        <img src="{{ $image }}" alt="Imagen" class="rounded-lg w-full h-48 object-cover">
+                        <img src="{{ $image }}" alt="Imagen" class="rounded-lg w-full h-32 object-cover">
                     @endforeach
                 </div>
             @endif

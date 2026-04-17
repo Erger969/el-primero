@@ -118,7 +118,7 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         if (auth()->id() !== $post->user_id) {
-            abort(403);
+            abort(403, 'No tienes permiso para editar esta publicación.');
         }
 
         $request->validate([
@@ -126,19 +126,40 @@ class PostController extends Controller
             'content' => 'required|string',
         ]);
 
+        // Guardar historial de cambios (auditoría)
+        if ($post->title !== $request->title) {
+            \App\Models\PostModification::create([
+                'user_id' => auth()->id(),
+                'post_id' => $post->id,
+                'campo_modificado' => 'titulo',
+                'valor_anterior' => $post->title,
+                'valor_nuevo' => $request->title,
+            ]);
+        }
+
+        if ($post->content !== $request->content) {
+            \App\Models\PostModification::create([
+                'user_id' => auth()->id(),
+                'post_id' => $post->id,
+                'campo_modificado' => 'contenido',
+                'valor_anterior' => $post->content,
+                'valor_nuevo' => $request->content,
+            ]);
+        }
+
         $post->update([
             'title' => $request->title,
             'content' => $request->content,
         ]);
 
-        return redirect()->route('feed')->with('success', 'Publicación actualizada.');
+        return redirect()->route('posts.show', $post)->with('success', 'Publicación actualizada.');
     }
 
     // Eliminar publicación
     public function destroy(Post $post)
     {
         if (auth()->id() !== $post->user_id && auth()->user()->role_id !== 3) {
-            abort(403);
+            abort(403, 'No tienes permiso para eliminar esta publicación.');
         }
 
         $post->delete();
