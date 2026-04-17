@@ -13,11 +13,19 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Perfil público (ver cualquier usuario)
+    Route::get('/profile/{id}', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+
+    // Edición de perfil (Breeze original)
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Actualizar descripción (nuevo)
+    Route::put('/profile/description', [App\Http\Controllers\ProfileController::class, 'updateDescription'])->name('profile.update-description');
+    
     // Feed y publicaciones
-    // Route::get('/feed', [App\Http\Controllers\PostController::class, 'feed'])->name('feed');
+    
     Route::resource('posts', App\Http\Controllers\PostController::class)->except(['index']);
     Route::get('/feed', [App\Http\Controllers\PostController::class, 'feed'])->name('feed');
     Route::get('/posts/create', [App\Http\Controllers\PostController::class, 'create'])->name('posts.create');

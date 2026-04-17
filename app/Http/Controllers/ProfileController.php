@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
+use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +14,7 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Display the user's profile form (edición propia).
      */
     public function edit(Request $request): View
     {
@@ -56,5 +58,41 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    // ========== NUEVOS MÉTODOS AGREGADOS ==========
+
+    /**
+     * Ver perfil público de cualquier usuario (propio o ajeno)
+     */
+    public function show($id)
+    {
+        $user = User::with('career')->findOrFail($id);
+        $posts = Post::where('user_id', $user->id)
+            ->visible()
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+        
+        $isOwnProfile = (Auth::id() === $user->id);
+        
+        return view('profile.show', compact('user', 'posts', 'isOwnProfile'));
+    }
+
+    /**
+     * Actualizar descripción del perfil (método adicional)
+     */
+    public function updateDescription(Request $request)
+    {
+        $user = Auth::user();
+        
+        $request->validate([
+            'descripcion' => 'nullable|string|max:500',
+        ]);
+        
+        $user->update([
+            'descripcion' => $request->descripcion,
+        ]);
+        
+        return redirect()->route('profile.show', $user->id)->with('success', 'Perfil actualizado.');
     }
 }
