@@ -66,7 +66,6 @@ php artisan db:seed
 
 #instalar paquetes de Cloudinary API para imagenes del proyecto
 composer require cloudinary/cloudinary_php
-
 composer dump-autoload
 php artisan config:clear
 php artisan cache:clear

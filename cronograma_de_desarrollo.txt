@@ -129,7 +129,7 @@ una ≤2MB, formatos JPG/PNG/WEBP
 • [ ] 5.4.2 Verificar permisos (autor o admin)
 • [ ] 5.4.3 Eliminar publicación (y comentarios/reacciones por CASCADE)
 • [ ] 5.4.4 Probar eliminación
-Proyecto Universitario – Laravel 12
+
  PUNTO 6: COMENTARIOS Y REACCIONES
 6.1 Comentarios
 • [ ] 6.1.1 Crear método store() en CommentController
@@ -142,23 +142,20 @@ Proyecto Universitario – Laravel 12
 6.2 Reacciones (5 tipos personalizados)
 • [ ] 6.2.1 Crear método toggle() en ReactionController
 • [ ] 6.2.2 Recibir post_id y type (ya, ahh, ehh, ohh, uhh)
-• [ ] 6.2.3 Lógica: si ya existe reacción del usuario, actualizar tipo; si no, crear
-nueva
+• [ ] 6.2.3 Lógica: si ya existe reacción del usuario, actualizar tipo; si no, crear nueva
 • [ ] 6.2.4 Devolver respuesta JSON con conteo actualizado de cada tipo
 • [ ] 6.2.5 En feed.blade.php agregar botones de reacción con AJAX (JavaScript)
 • [ ] 6.2.6 Mostrar conteo de cada reacción debajo de cada publicación
 • [ ] 6.2.7 Probar cambiar de reacción y ver que se actualiza
+
  PUNTO 7: PERFILES DE USUARIO
 7.1 Ver perfil (público y privado)
 • [ ] 7.1.1 Crear método show() en ProfileController
-• [ ] 7.1.2 Mostrar: nombre, apellidos, foto de perfil, descripción, carrera, fecha
-de registro
+• [ ] 7.1.2 Mostrar: nombre, apellidos, foto de perfil, descripción, carrera, fecha de registro
 • [ ] 7.1.3 Listar publicaciones del usuario (con paginación)
 • [ ] 7.1.4 Si es perfil propio, mostrar botón "Editar perfil"
-• [ ] 7.1.5 Si es perfil ajeno, mostrar botón "Reportar usuario" (similar a reportar
-publicación)
+• [ ] 7.1.5 Si es perfil ajeno, mostrar botón "Reportar usuario" (similar a reportar publicación)
 • [ ] 7.1.6 Crear vista profile/show.blade.php
-Proyecto Universitario – Laravel 12
 7.2 Editar perfil
 • [ ] 7.2.1 Crear método edit() y update() en ProfileController
 • [ ] 7.2.2 Crear vista profile/edit.blade.php (formulario para descripción)
@@ -166,6 +163,7 @@ Proyecto Universitario – Laravel 12
 (método uploadPhoto())
 • [ ] 7.2.4 Validar imagen: 2MB máx, formatos permitidos
 • [ ] 7.2.5 Probar actualización de perfil
+
  PUNTO 8: DASHBOARD DEL ADMINISTRADOR
 8.1 Estructura base del dashboard
 • [ ] 8.1.1 Crear DashboardController con método index()
