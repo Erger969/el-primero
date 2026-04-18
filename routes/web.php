@@ -46,7 +46,14 @@ Route::get('/admin-test', function () {
 })->middleware(['auth', 'role:admin']);
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Gestión del dashboard
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    // Gestión de Carreras
+    Route::resource('careers', App\Http\Controllers\Admin\CareerController::class);
+    // Gestión de Usuarios
+    Route::resource('users', App\Http\Controllers\Admin\UserController::class)->except(['show', 'create', 'store']);
+    Route::put('/users/{id}/suspend', [App\Http\Controllers\Admin\UserController::class, 'suspend'])->name('users.suspend');
+    Route::put('/users/{id}/restore', [App\Http\Controllers\Admin\UserController::class, 'restore'])->name('users.restore');
 });
 
 require __DIR__.'/auth.php';

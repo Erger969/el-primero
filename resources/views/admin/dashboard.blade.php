@@ -97,8 +97,11 @@
                     
                     <!-- Enlaces rápidos a gestión -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                        <a href="#" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
+                        <a href="{{ route('admin.users.index') }}" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
                             👥 Gestionar Usuarios
+                        </a>
+                        <a href="{{ route('admin.careers.index') }}" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
+                            📚 Gestionar Carreras   
                         </a>
                         <a href="#" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
                             📝 Gestionar Publicaciones
