@@ -54,6 +54,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', App\Http\Controllers\Admin\UserController::class)->except(['show', 'create', 'store']);
     Route::put('/users/{id}/suspend', [App\Http\Controllers\Admin\UserController::class, 'suspend'])->name('users.suspend');
     Route::put('/users/{id}/restore', [App\Http\Controllers\Admin\UserController::class, 'restore'])->name('users.restore');
+    // Gestión de Publicaciones
+    Route::resource('posts', App\Http\Controllers\Admin\PostController::class)->except(['show', 'create', 'store']);
+    Route::put('/posts/{id}/hide', [App\Http\Controllers\Admin\PostController::class, 'hide'])->name('posts.hide');
+    Route::put('/posts/{id}/show', [App\Http\Controllers\Admin\PostController::class, 'show'])->name('posts.show');
 });
 
 require __DIR__.'/auth.php';

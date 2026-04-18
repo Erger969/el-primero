@@ -103,7 +103,7 @@
                         <a href="{{ route('admin.careers.index') }}" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
                             📚 Gestionar Carreras   
                         </a>
-                        <a href="#" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
+                        <a href="{{ route('admin.posts.index') }}" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
                             📝 Gestionar Publicaciones
                         </a>
                         <a href="#" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
