@@ -15,17 +15,13 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     // Perfil público (ver cualquier usuario)
     Route::get('/profile/{id}', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-
     // Edición de perfil (Breeze original)
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
-    
     // Actualizar descripción (nuevo)
     Route::put('/profile/description', [App\Http\Controllers\ProfileController::class, 'updateDescription'])->name('profile.update-description');
-    
     // Feed y publicaciones
-    
     Route::resource('posts', App\Http\Controllers\PostController::class)->except(['index']);
     Route::get('/feed', [App\Http\Controllers\PostController::class, 'feed'])->name('feed');
     Route::get('/posts/create', [App\Http\Controllers\PostController::class, 'create'])->name('posts.create');
@@ -38,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/comments', [App\Http\Controllers\CommentController::class, 'store'])->name('comments.store');
     // Reacciones
     Route::post('/posts/{post}/react', [App\Http\Controllers\ReactionController::class, 'toggle'])->name('posts.react');
+    // Reportes
+    Route::post('/posts/{post}/report', [App\Http\Controllers\ReportController::class, 'store'])->name('posts.report');
 });
 
 // Ruta de prueba para middleware de roles
@@ -58,6 +56,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('posts', App\Http\Controllers\Admin\PostController::class)->except(['show', 'create', 'store']);
     Route::put('/posts/{id}/hide', [App\Http\Controllers\Admin\PostController::class, 'hide'])->name('posts.hide');
     Route::put('/posts/{id}/show', [App\Http\Controllers\Admin\PostController::class, 'show'])->name('posts.show');
+    // Gestión de Reportes
+    Route::get('/reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::put('/reports/{id}/resolve', [App\Http\Controllers\Admin\ReportController::class, 'resolve'])->name('reports.resolve');
+    Route::put('/reports/{id}/reject', [App\Http\Controllers\Admin\ReportController::class, 'reject'])->name('reports.reject');
+    Route::put('/reports/{id}/hide-post', [App\Http\Controllers\Admin\ReportController::class, 'hidePost'])->name('reports.hide-post');
 });
 
 require __DIR__.'/auth.php';
