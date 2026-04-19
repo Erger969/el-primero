@@ -29,6 +29,10 @@
                             Registrarse
                         </a>
                     @endauth
+                    <button @click="darkMode = !darkMode" class="p-2 rounded-full transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span x-show="!darkMode" class="text-yellow-500">🌞</span>
+                        <span x-show="darkMode" class="text-gray-300">🌙</span>
+                    </button>
                 </div>
             </div>
 

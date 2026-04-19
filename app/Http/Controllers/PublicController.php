@@ -22,7 +22,7 @@ class PublicController extends Controller
                 ->withCount(['comments', 'reactions'])
                 ->where('created_at', '>=', now()->subWeek())
                 ->orderByRaw('(comments_count + reactions_count) DESC')
-                ->limit(5)
+                ->limit(6)
                 ->get();
         });
         
