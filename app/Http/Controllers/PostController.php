@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Reaction;
+use App\Models\Career;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Cloudinary\Cloudinary;
@@ -18,26 +19,60 @@ class PostController extends Controller
     // }
 
     // Feed principal (para usuarios logueados)
-    public function feed()
+    public function feed(Request $request)
     {
-        // Obtener publicaciones no ocultas, con relaciones, ordenadas por fecha
-        $posts = Post::with(['user', 'comments.user', 'reactions'])
-            ->visible()
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $query = Post::with(['user', 'comments.user', 'reactions'])
+            ->visible();
         
-        // Obtener las reacciones del usuario actual para cada publicación
+        // Filtro por carrera
+        if ($request->filled('career_id')) {
+            $query->whereHas('user', function($q) use ($request) {
+                $q->where('career_id', $request->career_id);
+            });
+        }
+        
+        // Filtro por fecha
+        if ($request->filled('date_filter')) {
+            switch ($request->date_filter) {
+                case 'today':
+                    $query->whereDate('created_at', today());
+                    break;
+                case 'week':
+                    $query->where('created_at', '>=', now()->subWeek());
+                    break;
+                case 'month':
+                    $query->where('created_at', '>=', now()->subMonth());
+                    break;
+            }
+        }
+        
+        // Ordenamiento
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'most_commented':
+                    $query->withCount('comments')->orderBy('comments_count', 'desc');
+                    break;
+                case 'most_reactions':
+                    $query->withCount('reactions')->orderBy('reactions_count', 'desc');
+                    break;
+                default:
+                    $query->orderBy('created_at', 'desc');
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+        
+        $posts = $query->paginate(10);
+        
         $userReactions = Reaction::where('user_id', Auth::id())
             ->whereIn('post_id', $posts->pluck('id'))
             ->get()
             ->keyBy('post_id');
         
-        // Verificar que la vista existe
-        if (!view()->exists('feed')) {
-            dd('La vista feed no existe en resources/views/feed.blade.php');
-        }
+        // Obtener carreras para el filtro
+        $careers = Career::orderBy('nombre')->get();
         
-        return view('feed', compact('posts', 'userReactions'));
+        return view('feed', compact('posts', 'userReactions', 'careers'));
     }
 
     // Mostrar formulario para crear publicación

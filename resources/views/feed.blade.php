@@ -1,6 +1,51 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <!-- Filtros -->
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+            <div class="p-4">
+                <h3 class="font-bold mb-3">🔍 Filtrar publicaciones</h3>
+                <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <!-- Filtro por carrera -->
+                    <select name="career_id" class="border-gray-300 rounded-md shadow-sm text-sm">
+                        <option value="">Todas las carreras</option>
+                        @foreach($careers as $career)
+                            <option value="{{ $career->id }}" {{ request('career_id') == $career->id ? 'selected' : '' }}>
+                                {{ $career->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                    
+                    <!-- Filtro por fecha -->
+                    <select name="date_filter" class="border-gray-300 rounded-md shadow-sm text-sm">
+                        <option value="">Todas las fechas</option>
+                        <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>Hoy</option>
+                        <option value="week" {{ request('date_filter') == 'week' ? 'selected' : '' }}>Última semana</option>
+                        <option value="month" {{ request('date_filter') == 'month' ? 'selected' : '' }}>Último mes</option>
+                    </select>
+                    
+                    <!-- Ordenamiento -->
+                    <select name="sort" class="border-gray-300 rounded-md shadow-sm text-sm">
+                        <option value="">Más recientes</option>
+                        <option value="most_commented" {{ request('sort') == 'most_commented' ? 'selected' : '' }}>Más comentados</option>
+                        <option value="most_reactions" {{ request('sort') == 'most_reactions' ? 'selected' : '' }}>Más reaccionados</option>
+                    </select>
+                    
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
+                        🔍 Aplicar filtros
+                    </button>
+                </form>
+                
+                @if(request()->anyFilled(['career_id', 'date_filter', 'sort']))
+                    <div class="mt-3">
+                        <a href="{{ route('feed') }}" class="text-sm text-gray-500 hover:text-gray-700">
+                            ✖️ Limpiar filtros
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </div>
+
             <!-- Botón nueva publicación -->
             <div class="mb-6">
                 <a href="{{ route('posts.create') }}" 
