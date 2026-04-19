@@ -12,6 +12,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Rutas de perfil y publicaciones (protegidas por auth logeados)
 Route::middleware('auth')->group(function () {
     // Perfil público (ver cualquier usuario)
     Route::get('/profile/{id}', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
@@ -36,13 +37,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/react', [App\Http\Controllers\ReactionController::class, 'toggle'])->name('posts.react');
     // Reportes
     Route::post('/posts/{post}/report', [App\Http\Controllers\ReportController::class, 'store'])->name('posts.report');
+    // Seguimiento de usuarios para Master
+    Route::post('/profile/request-master', [App\Http\Controllers\ProfileController::class, 'requestMaster'])->name('profile.request-master');
 });
 
-// Ruta de prueba para middleware de roles
+// Ruta de prueba de roles
 Route::get('/admin-test', function () {
     return 'Eres administrador';
 })->middleware(['auth', 'role:admin']);
 
+// Ruta de Admin Dashboard
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Gestión del dashboard
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
@@ -61,6 +65,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/reports/{id}/resolve', [App\Http\Controllers\Admin\ReportController::class, 'resolve'])->name('reports.resolve');
     Route::put('/reports/{id}/reject', [App\Http\Controllers\Admin\ReportController::class, 'reject'])->name('reports.reject');
     Route::put('/reports/{id}/hide-post', [App\Http\Controllers\Admin\ReportController::class, 'hidePost'])->name('reports.hide-post');
+    // vista de solicitudes de ascenso a Master
+    Route::get('/master-requests', [App\Http\Controllers\Admin\MasterRequestController::class, 'index'])->name('master-requests.index');
+    Route::put('/master-requests/{id}/approve', [App\Http\Controllers\Admin\MasterRequestController::class, 'approve'])->name('master-requests.approve');
+    Route::put('/master-requests/{id}/reject', [App\Http\Controllers\Admin\MasterRequestController::class, 'reject'])->name('master-requests.reject');
+    // Auditoría de acciones de Masters
+    Route::get('/master-activity', [App\Http\Controllers\Admin\MasterActivityController::class, 'index'])->name('master-activity.index');
+    Route::delete('/master-activity/{id}/revoke', [App\Http\Controllers\Admin\MasterActivityController::class, 'revokePermissions'])->name('master-activity.revoke');
+});
+
+// Rutas para Masters (ocultar publicaciones)
+Route::middleware(['auth'])->prefix('master')->name('master.')->group(function () {
+    Route::post('/posts/{post}/hide', [App\Http\Controllers\Master\HideController::class, 'toggle'])->name('posts.hide');
 });
 
 require __DIR__.'/auth.php';

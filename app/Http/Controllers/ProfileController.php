@@ -95,4 +95,32 @@ class ProfileController extends Controller
         
         return redirect()->route('profile.show', $user->id)->with('success', 'Perfil actualizado.');
     }
+
+    // Solicitar ascenso a Master
+    public function requestMaster()
+    {
+        $user = Auth::user();
+        
+        // Verificar que el usuario es universitario (role_id = 1)
+        if ($user->role_id != 1) {
+            return back()->with('error', 'Solo los usuarios universitarios pueden solicitar ser Master.');
+        }
+        
+        // Verificar si ya tiene una solicitud pendiente
+        $existingRequest = \App\Models\MasterRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
+        
+        if ($existingRequest) {
+            return back()->with('error', 'Ya tienes una solicitud pendiente de aprobación.');
+        }
+        
+        // Crear la solicitud
+        \App\Models\MasterRequest::create([
+            'user_id' => $user->id,
+            'status' => 'pending',
+        ]);
+        
+        return back()->with('success', 'Solicitud enviada. Espera la aprobación del administrador.');
+    }
 }

@@ -11,21 +11,35 @@
                     <p class="text-xs text-gray-400">{{ $post->user->career->nombre }}</p>
                 @endif
             </div>
-            @auth
-                @if(auth()->id() === $post->user_id)
-                    <a href="{{ route('posts.edit', $post) }}" class="text-gray-500 hover:text-gray-700">✏️ Editar</a>
-                @endif
-            @endauth
+            <div class="flex gap-2">
+                @auth
+                    @if(auth()->id() === $post->user_id)
+                        <a href="{{ route('posts.edit', $post) }}" class="text-gray-500 hover:text-gray-700">✏️ Editar</a>
+                    @endif
+                    
+                    @if(auth()->id() !== $post->user_id)
+                        <button type="button" 
+                                onclick="openReportModal({{ $post->id }})"
+                                class="text-gray-400 hover:text-red-500 text-sm">
+                            🚨 Reportar
+                        </button>
+                    @endif
+                    
+                    @if(auth()->user()->role_id == 2 && auth()->id() !== $post->user_id)
+                        <form action="{{ route('master.posts.hide', $post) }}" method="POST" class="inline-block">
+                            @csrf
+                            <button type="submit" class="text-yellow-600 hover:text-yellow-800 text-sm ml-2">
+                                @if($post->is_hidden)
+                                    👁️ Mostrar
+                                @else
+                                    🔒 Ocultar
+                                @endif
+                            </button>
+                        </form>
+                    @endif
+                @endauth
+            </div>
         </div>
-
-        <!-- Reportar -->
-        @if(auth()->id() !== $post->user_id)
-            <button type="button" 
-                    onclick="openReportModal({{ $post->id }})"
-                    class="text-gray-400 hover:text-red-500 text-sm">
-                🚨 Reportar
-            </button>
-        @endif
 
         <!-- Título y contenido -->
         <a href="{{ route('posts.show', $post) }}">
@@ -46,7 +60,7 @@
         @endif
 
         <!-- Reacciones (cambia según autenticación) -->
-        <div class="flex gap-2 mb-4">
+        <div class="flex gap-2 mb-4 flex-wrap">
             @auth
                 {{-- Usuario logueado: botones interactivos --}}
                 @php
@@ -95,7 +109,7 @@
             @endauth
         </div>
 
-        <!-- Comentarios (cambia según autenticación) -->
+        <!-- Comentarios -->
         <div class="border-t pt-4 mt-2">
             <h4 class="font-bold mb-2">Comentarios ({{ $post->comments->count() }})</h4>
             
@@ -113,7 +127,6 @@
             @endif
 
             @auth
-                {{-- Usuario logueado: puede comentar --}}
                 <form action="{{ route('comments.store', $post) }}" method="POST" class="mt-2">
                     @csrf
                     <div class="flex gap-2">
@@ -130,54 +143,5 @@
                 </div>
             @endauth
         </div>
-
-        <!-- Modal para reportar -->
-        <div id="reportModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-white rounded-lg p-6 max-w-md w-full">
-                <h3 class="text-lg font-bold mb-4">Reportar publicación</h3>
-                <form id="reportForm" method="POST">
-                    @csrf
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Motivo del reporte</label>
-                        <select name="category" required class="w-full border-gray-300 rounded-md shadow-sm">
-                            <option value="spam">Spam o contenido engañoso</option>
-                            <option value="acoso">Acoso o intimidación</option>
-                            <option value="ofensivo">Contenido ofensivo</option>
-                            <option value="desinformacion">Desinformación</option>
-                            <option value="otro">Otro motivo</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2">Descripción adicional (opcional)</label>
-                        <textarea name="reason" rows="3" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
-                    </div>
-                    <div class="flex justify-end gap-2">
-                        <button type="button" onclick="closeReportModal()" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded">
-                            Enviar reporte
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <script>
-            let currentPostId = null;
-            
-            function openReportModal(postId) {
-                currentPostId = postId;
-                const form = document.getElementById('reportForm');
-                form.action = `/posts/${postId}/report`;
-                document.getElementById('reportModal').classList.remove('hidden');
-                document.getElementById('reportModal').classList.add('flex');
-            }
-            
-            function closeReportModal() {
-                document.getElementById('reportModal').classList.add('hidden');
-                document.getElementById('reportModal').classList.remove('flex');
-            }
-        </script> 
     </div>
 </div>

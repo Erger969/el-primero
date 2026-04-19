@@ -109,8 +109,11 @@
                         <a href="{{ route('admin.reports.index') }}" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
                             ⚠️ Ver Reportes
                         </a>
-                        <a href="#" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
+                        <a href="{{ route('admin.master-requests.index') }}" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
                             👑 Solicitudes Master
+                        </a>
+                        <a href="{{ route('admin.master-activity.index') }}" class="bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-center transition">
+                            📋 Actividad de Masters
                         </a>
                     </div>
                 </div>

@@ -27,6 +27,33 @@
                                 <a href="{{ route('profile.edit') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                     Editar perfil
                                 </a>
+                                <!-- Solicitar ascenso a Master -->
+                                @if($isOwnProfile && auth()->user()->role_id == 1)
+                                    @php
+                                        $hasPendingRequest = \App\Models\MasterRequest::where('user_id', auth()->id())
+                                            ->where('status', 'pending')
+                                            ->exists();
+                                    @endphp
+                                    
+                                    @if(!$hasPendingRequest)
+                                        <div class="mt-4">
+                                            <form action="{{ route('profile.request-master') }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                                                    👑 Solicitar ser Master
+                                                </button>
+                                            </form>
+                                            <p class="text-xs text-gray-500 mt-1">Conviértete en usuario verificado y obtén permisos especiales.</p>
+                                        </div>
+                                    @else
+                                        <div class="mt-4">
+                                            <p class="text-yellow-600 bg-yellow-100 p-2 rounded">
+                                                ⏳ Tu solicitud está pendiente de aprobación.
+                                            </p>
+                                        </div>
+                                    @endif
+                                @endif
+
                             </div>
                         @else
                             <div>
