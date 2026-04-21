@@ -24,6 +24,7 @@ export default {
                 'dark-surface': '#1A2A38',     // Azul grisáceo oscuro
                 'dark-text-primary': '#E5E5E5', // Gris claro
                 'dark-text-secondary': '#8A9BB0', // Gris azulado
+                'dark-background-card': '#1C1F29',  // Negro azulado
             },
             fontFamily: {
                 'sans': ['Figtree', 'system-ui', 'sans-serif'],

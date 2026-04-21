@@ -69,11 +69,13 @@
         /* Efecto hover para tarjetas */
         .post-card {
             transition: all 0.3s ease;
+            border-radius: 0.75rem; /*borde redondeado */
         }
         
         .post-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            transform: translateY(-4px); /*8xl ligero levantamiento */
+            box-shadow: 0 20px 25px -5px gray, 0 10px 10px -5px yellow; /* sombra más pronunciada */
+            border-radius: 1rem;  /* Equivalente a rounded-2xl (más redondeado al hover) */
         }
         
         /* Botones de reacción */
@@ -125,36 +127,36 @@
         .animate-slide-up { animation: slideUp 0.6s ease-out; }
     </style>
 </head>
-<body class="bg-background dark:bg-dark-background text-text-primary dark:text-dark-text-primary transition-colors duration-300"
+<body class="transition-colors duration-300 bg-background dark:bg-dark-background text-text-primary dark:text-dark-text-primary"
       :class="{ 'light': !darkMode, 'dark': darkMode }">
     
     <!-- NAVBAR STICKY (siempre visible) -->
-    <nav class="sticky-nav border-b border-white/20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+    <nav class="border-b sticky-nav border-white/20">
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
-                <a href="{{ route('home') }}" class="flex items-center gap-2 hover:opacity-80 transition">
-                    <div class="w-9 h-9 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
-                        <span class="text-white text-lg">🦅</span>
+                <a href="{{ route('home') }}" class="flex items-center gap-2 transition hover:opacity-80">
+                    <div class="flex items-center justify-center w-9 h-9 bg-gradient-to-br from-primary to-secondary rounded-xl">
+                        <span class="text-lg text-white ">🦅</span>
                     </div>
-                    <span class="font-bold text-xl text-white">UniSocial</span>
+                    <span class="text-xl font-bold text-slate-800 dark:text-white">UniSocial</span>
                 </a>
                 
                 <!-- Botones de acción (dropdowns) -->
                 <div class="flex items-center gap-1">
                     <!-- Dropdown Carreras -->
-                    <div class="dropdown-trigger relative">
-                        <button class="nav-btn px-4 py-2 rounded-lg text-white bg-white/20 backdrop-blur-sm transition-all duration-300">
+                    <div class="relative dropdown-trigger">
+                        <button class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
                             📚 Carreras
                         </button>
-                        <div class="dropdown-menu absolute top-full left-0 mt-2 w-64 bg-white dark:bg-dark-surface rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50">
-                            <div class="p-2">
-                                <div class="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 border-b dark:border-gray-700">
+                        <div class="absolute left-0 z-50 w-64 mt-2 bg-white border border-gray-200 shadow-xl dark:bg-dark-surface rounded-xl dropdown-menu top-full dark:border-gray-700">
+                            <div class="p-2 text-xs font-semibold text-gray-500 border-b border-gray-700 dark:text-gray-400 dark:border-gray-700">
+                                <div class="px-3 py-2 ">
                                     Todas las carreras
                                 </div>
                                 @foreach(\App\Models\Career::all() as $career)
                                     <a href="{{ route('feed') }}?career_id={{ $career->id }}" 
-                                       class="flex justify-between items-center px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                                       class="flex items-center justify-between px-3 py-2 text-sm transition rounded-lg hover:bg-gray-700 dark:hover:bg-gray-700">
                                         <span>{{ $career->nombre }}</span>
                                         <span class="text-xs text-gray-400">{{ $career->users()->count() }} estudiantes</span>
                                     </a>
@@ -164,22 +166,22 @@
                     </div>
                     
                     <!-- Dropdown Fechas -->
-                    <div class="dropdown-trigger relative">
-                        <button class="nav-btn px-4 py-2 rounded-lg text-white bg-white/20 backdrop-blur-sm transition-all duration-300">
+                    <div class="relative dropdown-trigger">
+                        <button class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
                             📅 Fechas
                         </button>
-                        <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-white dark:bg-dark-surface rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50">
+                        <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-200 shadow-xl dropdown-menu top-full dark:bg-dark-surface rounded-xl dark:border-gray-700">
                             <div class="p-2">
-                                <a href="{{ route('feed') }}" class="block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                                <a href="{{ route('feed') }}" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                                     Todas las fechas
                                 </a>
-                                <a href="{{ route('feed') }}?date_filter=today" class="block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                                <a href="{{ route('feed') }}?date_filter=today" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                                     Hoy
                                 </a>
-                                <a href="{{ route('feed') }}?date_filter=week" class="block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                                <a href="{{ route('feed') }}?date_filter=week" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                                     Última semana
                                 </a>
-                                <a href="{{ route('feed') }}?date_filter=month" class="block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                                <a href="{{ route('feed') }}?date_filter=month" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                                     Último mes
                                 </a>
                             </div>
@@ -187,19 +189,19 @@
                     </div>
                     
                     <!-- Dropdown Ordenar -->
-                    <div class="dropdown-trigger relative">
-                        <button class="nav-btn px-4 py-2 rounded-lg text-white bg-white/20 backdrop-blur-sm transition-all duration-300">
+                    <div class="relative dropdown-trigger">
+                        <button class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
                             🔽 Ordenar
                         </button>
-                        <div class="dropdown-menu absolute top-full left-0 mt-2 w-48 bg-white dark:bg-dark-surface rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50">
+                        <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-200 shadow-xl dropdown-menu top-full dark:bg-dark-surface rounded-xl dark:border-gray-700">
                             <div class="p-2">
-                                <a href="{{ route('feed') }}" class="block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                                <a href="{{ route('feed') }}" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                                     Más recientes
                                 </a>
-                                <a href="{{ route('feed') }}?sort=most_commented" class="block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                                <a href="{{ route('feed') }}?sort=most_commented" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                                     💬 Más comentados
                                 </a>
-                                <a href="{{ route('feed') }}?sort=most_reactions" class="block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                                <a href="{{ route('feed') }}?sort=most_reactions" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                                     ❤️ Más reaccionados
                                 </a>
                             </div>
@@ -208,20 +210,20 @@
                     
                     <!-- Login / Register / Dark Mode -->
                     @auth
-                        <a href="{{ route('feed') }}" class="nav-btn px-4 py-2 rounded-lg text-white bg-primary hover:bg-secondary transition-all duration-300 ml-2">
+                        <a href="{{ route('feed') }}" class="px-4 py-2 ml-2 text-white transition-all duration-300 rounded-lg nav-btn bg-primary hover:bg-secondary">
                             📱 Feed
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="nav-btn px-4 py-2 rounded-lg text-white bg-white/20 backdrop-blur-sm transition-all duration-300">
+                        <a href="{{ route('login') }}" class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
                             Iniciar sesión
                         </a>
-                        <a href="{{ route('register') }}" class="nav-btn px-4 py-2 rounded-lg text-white bg-secondary hover:bg-primary transition-all duration-300">
+                        <a href="{{ route('register') }}" class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-secondary hover:bg-primary">
                             Registrarse
                         </a>
                     @endauth
                     
                     <!-- Botón modo oscuro -->
-                    <button @click="darkMode = !darkMode" class="nav-btn p-2 rounded-lg bg-white/20 backdrop-blur-sm transition-all duration-300 ml-1">
+                    <button @click="darkMode = !darkMode" class="p-2 ml-1 transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
                         <span x-show="!darkMode" class="text-yellow-400">🌞</span>
                         <span x-show="darkMode" class="text-gray-300">🌙</span>
                     </button>
@@ -237,20 +239,20 @@
             <source src="{{ asset('videos/video_UPEA_4k.mp4') }}" type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
-        <div class="hero-content absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 animate-fade-in">
+        <div class="absolute inset-0 flex flex-col items-center justify-center px-4 text-center hero-content">
+            <h1 class="mb-4 text-4xl font-bold text-white md:text-6xl lg:text-7xl animate-fade-in">
                 Conecta, Comparte y <span class="text-secondary">Crece</span>
             </h1>
-            <p class="text-lg md:text-xl text-white/90 max-w-2xl mb-8 animate-slide-up">
+            <p class="max-w-2xl mb-8 text-lg md:text-xl text-white/90 animate-slide-up">
                 La red social exclusiva para la comunidad universitaria. Comparte noticias, eventos y conecta con estudiantes de tu carrera.
             </p>
             
             <!-- Barra de búsqueda -->
-            <div class="w-full max-w-3xl bg-white/10 backdrop-blur-md rounded-2xl p-2 animate-slide-up">
-                <form action="{{ route('feed') }}" method="GET" class="flex flex-col md:flex-row gap-2">
+            <div class="w-full max-w-3xl p-2 bg-white/10 backdrop-blur-md rounded-2xl animate-slide-up">
+                <form action="{{ route('feed') }}" method="GET" class="flex flex-col gap-2 md:flex-row">
                     <input type="text" name="search" placeholder="Buscar publicaciones, eventos, noticias..." 
-                           class="flex-1 bg-white/20 text-white placeholder-white/60 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary">
-                    <button type="submit" class="bg-secondary hover:bg-primary text-white px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 font-semibold">
+                           class="flex-1 px-4 py-3 text-slate-800 bg-white/20 placeholder-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary">
+                    <button type="submit" class="px-6 py-3 font-semibold text-white transition-all duration-300 bg-secondary hover:bg-primary rounded-xl hover:scale-105">
                         🔍 Buscar
                     </button>
                 </form>
@@ -258,19 +260,19 @@
             
             <!-- Categorías rápidas -->
             <div class="flex flex-wrap justify-center gap-3 mt-8">
-                <a href="{{ route('feed') }}?type=evento" class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-white hover:bg-secondary transition">
+                <a href="{{ route('feed') }}?type=evento" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
                     📅 Eventos
                 </a>
-                <a href="{{ route('feed') }}?type=noticia" class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-white hover:bg-secondary transition">
+                <a href="{{ route('feed') }}?type=noticia" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
                     📰 Noticias
                 </a>
-                <a href="{{ route('feed') }}?type=curso" class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-white hover:bg-secondary transition">
+                <a href="{{ route('feed') }}?type=curso" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
                     📚 Cursos
                 </a>
-                <a href="{{ route('feed') }}?type=aviso" class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-white hover:bg-secondary transition">
+                <a href="{{ route('feed') }}?type=aviso" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
                     ⚠️ Avisos
                 </a>
-                <a href="{{ route('feed') }}?sort=most_commented" class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-white hover:bg-secondary transition">
+                <a href="{{ route('feed') }}?sort=most_commented" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
                     🔥 Tendencias
                 </a>
             </div>
@@ -279,31 +281,31 @@
     @endif
     
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-4xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
         
         <!-- TENDENCIAS DE LA SEMANA (3x2 = 6 publicaciones) -->
         <section class="mb-12">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                     🔥 <span class="text-secondary">Tendencias</span> de la semana
                 </h2>
                 <span class="text-sm text-text-secondary dark:text-dark-text-secondary">Lo más comentado y reaccionado</span>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                 @forelse($trendingPosts as $post)
-                    <a href="{{ route('posts.show', $post) }}" class="post-card bg-surface dark:bg-dark-surface rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 block">
+                    <a href="{{ route('posts.show', $post) }}" class="block overflow-hidden transition-all duration-300 shadow-md post-card bg-surface dark:bg-dark-surface rounded-xl hover:shadow-xl">
                         @if($post->images && count(json_decode($post->images, true)) > 0)
                             @php $images = json_decode($post->images, true); @endphp
-                            <img src="{{ $images[0] }}" alt="{{ $post->title }}" class="w-full h-40 object-cover">
+                            <img src="{{ $images[0] }}" alt="{{ $post->title }}" class="object-cover w-full h-40">
                         @else
-                            <div class="w-full h-40 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                            <div class="flex items-center justify-center w-full h-40 bg-gradient-to-br from-primary/20 to-secondary/20">
                                 <span class="text-3xl">🦅</span>
                             </div>
                         @endif
                         <div class="p-4">
-                            <h3 class="font-bold text-text-primary dark:text-dark-text-primary mb-1 line-clamp-2">{{ $post->title }}</h3>
-                            <div class="flex justify-between items-center text-sm text-text-secondary dark:text-dark-text-secondary mt-2">
+                            <h3 class="mb-1 font-bold text-text-primary dark:text-dark-text-primary line-clamp-2">{{ $post->title }}</h3>
+                            <div class="flex items-center justify-between mt-2 text-sm text-text-secondary dark:text-dark-text-secondary">
                                 <span>👤 {{ $post->user->name }}</span>
                                 <div class="flex gap-3">
                                     <span>💬 {{ $post->comments_count }}</span>
@@ -313,7 +315,7 @@
                         </div>
                     </a>
                 @empty
-                    <div class="col-span-3 text-center py-8 text-text-secondary">
+                    <div class="col-span-3 py-8 text-center text-text-secondary">
                         No hay tendencias aún. ¡Sé el primero en publicar!
                     </div>
                 @endforelse
@@ -322,17 +324,17 @@
         
         <!-- PUBLICACIONES RECIENTES (feed completo) -->
         <section>
-            <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary mb-6">
+            <h2 class="mb-6 text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                 📰 Últimas publicaciones
             </h2>
             
             @forelse($posts as $post)
-                <div class="post-card bg-surface dark:bg-dark-surface rounded-xl shadow-md hover:shadow-xl transition-all duration-300 mb-6 overflow-hidden">
-                    <div class="p-5">
+                <div class="mb-6 overflow-hidden transition-all duration-300 shadow-md post-card bg-surface dark:bg-dark-surface rounded-xl hover:shadow-xl">
+                    <div class="p-6">
                         <!-- Encabezado -->
-                        <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-start justify-between mb-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold">
+                                <div class="flex items-center justify-center w-10 h-10 font-bold text-white rounded-full bg-gradient-to-br from-primary to-secondary">
                                     {{ substr($post->user->name, 0, 1) }}
                                 </div>
                                 <div>
@@ -342,31 +344,31 @@
                             </div>
                             @auth
                                 @if(auth()->id() === $post->user_id)
-                                    <a href="{{ route('posts.edit', $post) }}" class="text-text-secondary hover:text-primary transition">✏️</a>
+                                    <a href="{{ route('posts.edit', $post) }}" class="transition text-text-secondary hover:text-primary">✏️</a>
                                 @endif
                             @endauth
                         </div>
                         
                         <!-- Título y contenido -->
                         <a href="{{ route('posts.show', $post) }}">
-                            <h2 class="text-xl font-bold text-text-primary dark:text-dark-text-primary mb-2 hover:text-primary transition">{{ $post->title }}</h2>
+                            <h2 class="mb-2 text-xl font-bold transition text-text-primary dark:text-dark-text-primary hover:text-primary">{{ $post->title }}</h2>
                         </a>
-                        <p class="text-text-secondary dark:text-dark-text-secondary mb-3">{{ Str::limit($post->content, 150) }}</p>
+                        <p class="mb-3 text-text-secondary dark:text-dark-text-secondary">{{ Str::limit($post->content, 150) }}</p>
                         
                         <!-- Imágenes -->
                         @if($post->images)
                             @php $images = json_decode($post->images, true); @endphp
                             @if(is_array($images) && count($images) > 0)
-                                <div class="grid grid-cols-2 gap-2 mb-4">
+                                <div class="overflow-hidden bg-gray-100 rounded-lg dark:bg-gray-700">
                                     @foreach(array_slice($images, 0, 2) as $image)
-                                        <img src="{{ $image }}" alt="Imagen" class="rounded-lg w-full h-32 object-cover">
+                                        <img src="{{ $image }}" alt="Imagen" class="object-contain w-full h-40 rounded-lg">
                                     @endforeach
                                 </div>
                             @endif
                         @endif
                         
                         <!-- Reacciones -->
-                        <div class="flex gap-2 mb-4 flex-wrap border-t pt-3">
+                        <div class="flex flex-wrap gap-2 pt-3 mb-4 border-t">
                             @auth
                                 @php
                                     $reactionTypes = [
@@ -389,25 +391,25 @@
                             @else
                                 @php $reactionTypes = ['ya' => '😊', 'ahh' => '😮', 'ehh' => '🤔', 'ohh' => '😲', 'uhh' => '😅']; @endphp
                                 @foreach($reactionTypes as $key => $emoji)
-                                    <div class="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm">
+                                    <div class="px-3 py-1 text-sm text-gray-600 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">
                                         {{ $emoji }} {{ $key }} ({{ $post->reactions->where('type', $key)->count() }})
                                     </div>
                                 @endforeach
-                                <div class="text-xs text-text-secondary ml-2">
+                                <div class="ml-2 text-xs text-text-secondary">
                                     <a href="{{ route('login') }}" class="text-secondary hover:text-primary">Inicia sesión</a> para reaccionar
                                 </div>
                             @endauth
                         </div>
                         
                         <!-- Comentarios simplificados -->
-                        <div class="border-t pt-3">
+                        <div class="pt-3 border-t">
                             <div class="flex items-center justify-between mb-2">
                                 <h4 class="font-semibold text-text-primary dark:text-dark-text-primary">💬 Comentarios ({{ $post->comments->count() }})</h4>
-                                <a href="{{ route('posts.show', $post) }}" class="text-xs text-secondary hover:text-primary transition">Ver todos</a>
+                                <a href="{{ route('posts.show', $post) }}" class="text-xs transition text-secondary hover:text-primary">Ver todos</a>
                             </div>
                             
                             @foreach($post->comments->take(2) as $comment)
-                                <div class="mb-2 text-sm bg-gray-50 dark:bg-gray-800/50 p-2 rounded-lg">
+                                <div class="p-2 mb-2 text-sm rounded-lg bg-gray-50 dark:bg-gray-800/50">
                                     <strong class="text-text-primary dark:text-dark-text-primary">{{ $comment->user->name }}</strong>
                                     <p class="text-text-secondary dark:text-dark-text-secondary">{{ Str::limit($comment->content, 80) }}</p>
                                 </div>
@@ -418,14 +420,14 @@
                                     @csrf
                                     <div class="flex gap-2">
                                         <input type="text" name="content" placeholder="Escribe un comentario..." 
-                                               class="flex-1 bg-background dark:bg-dark-background border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent">
-                                        <button type="submit" class="bg-secondary hover:bg-primary text-white px-4 py-2 rounded-lg text-sm transition-all duration-300">
+                                               class="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-background dark:bg-dark-background dark:border-gray-700 focus:ring-2 focus:ring-secondary focus:border-transparent">
+                                        <button type="submit" class="px-4 py-2 text-sm text-white transition-all duration-300 rounded-lg bg-secondary hover:bg-primary">
                                             ➤
                                         </button>
                                     </div>
                                 </form>
                             @else
-                                <p class="text-xs text-text-secondary mt-2">
+                                <p class="mt-2 text-xs text-text-secondary">
                                     <a href="{{ route('login') }}" class="text-secondary hover:text-primary">Inicia sesión</a> para comentar
                                 </p>
                             @endauth
@@ -433,10 +435,10 @@
                     </div>
                 </div>
             @empty
-                <div class="text-center py-12 bg-surface dark:bg-dark-surface rounded-xl">
+                <div class="py-12 text-center bg-surface dark:bg-dark-surface rounded-xl">
                     <p class="text-text-secondary">No hay publicaciones aún. ¡Sé el primero en publicar!</p>
                     @auth
-                        <a href="{{ route('posts.create') }}" class="inline-block mt-4 bg-secondary hover:bg-primary text-white px-6 py-2 rounded-lg transition">
+                        <a href="{{ route('posts.create') }}" class="inline-block px-6 py-2 mt-4 text-white transition rounded-lg bg-secondary hover:bg-primary">
                             + Crear publicación
                         </a>
                     @endauth
@@ -451,9 +453,9 @@
     </main>
     
     <!-- FOOTER -->
-    <footer class="bg-primary dark:bg-dark-primary py-6 mt-12">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-white/70 text-sm">© {{ date('Y') }} UniSocial - Conectando a la comunidad universitaria</p>
+    <footer class="py-6 mt-12 bg-primary dark:bg-dark-primary">
+        <div class="px-4 mx-auto text-center max-w-7xl">
+            <p class="text-sm text-white/70">© {{ date('Y') }} UniSocial - Conectando a la comunidad universitaria</p>
         </div>
     </footer>
     
