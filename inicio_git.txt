@@ -69,3 +69,8 @@ composer require cloudinary/cloudinary_php
 composer dump-autoload
 php artisan config:clear
 php artisan cache:clear
+
+
+Comando	¿Qué hace?	¿Se queda ejecutando?	¿Cuándo usar?
+npm run dev	    : Compila UNA VEZ y se detiene	❌ No	Cuando solo quieres compilar una vez
+npm run watch	: Compila Y OBSERVA cambios continuamente	✅ Sí (hasta que lo detengas)	Mientras desarrollas (recomendado)
