@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
-      x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" 
+      x-data="{ 
+          darkMode: localStorage.getItem('darkMode') === 'true',
+          activePanel: 1,
+          next() { if (this.activePanel < 3) this.activePanel++; },
+          prev() { if (this.activePanel > 1) this.activePanel--; }
+      }" 
       x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" 
       :class="darkMode ? 'dark' : ''">
 <head>
@@ -13,7 +18,7 @@
     <style>
         /* Video hero */
         .hero-video {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -23,18 +28,13 @@
         }
         
         .hero-overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, rgba(26, 60, 94, 0.85) 0%, rgba(196, 163, 90, 0.75) 100%);
             z-index: 1;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 2;
         }
         
         /* Navbar fijo (sticky) con blur */
@@ -49,46 +49,6 @@
         
         .dark .sticky-nav {
             background-color: rgba(10, 22, 32, 0.8);
-        }
-        
-        /* Dropdown menus */
-        .dropdown-menu {
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.2s ease;
-        }
-        
-        
-        .dropdown-trigger:hover .dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        /* Efecto hover para tarjetas */
-        .post-card {
-            transition: all 0.3s ease;
-            border-radius: 0.75rem; /*borde redondeado */
-        }
-        
-        .post-card:hover {
-            transform: translateY(-4px); /*8xl ligero levantamiento */
-            box-shadow: 0 20px 25px -5px gray, 0 10px 10px -5px yellow; /* sombra más pronunciada */
-            border-radius: 1rem;  /* Equivalente a rounded-2xl (más redondeado al hover) */
-        }
-        
-        /* Botones de reacción */
-        .reaction-btn {
-            transition: all 0.2s ease;
-        }
-        
-        .reaction-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .reaction-btn:active {
-            transform: scale(0.95);
         }
         
         /* Botones de navbar */
@@ -112,117 +72,74 @@
             color: #2A6B9E !important;
         }
         
-        /* Animaciones */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        /* Transiciones de panel */
+        .panel-transition {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        @keyframes slideUp {
+        /* Ocultar scrollbar en el carrusel */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
         
-        .animate-fade-in { animation: fadeIn 0.8s ease-out; }
-        .animate-slide-up { animation: slideUp 0.6s ease-out; }
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-right { animation: slideInRight 0.5s ease-out; }
+        .animate-slide-left { animation: slideInLeft 0.5s ease-out; }
     </style>
 </head>
-<body class="transition-colors duration-300 bg-background dark:bg-dark-background text-text-primary dark:text-dark-text-primary"
+<body class="overflow-x-hidden transition-colors duration-300"
       :class="{ 'light': !darkMode, 'dark': darkMode }">
     
-    <!-- NAVBAR STICKY (siempre visible) -->
-    <nav class="border-b sticky-nav border-white/20">
+    <!-- Video de fondo fijo -->
+    <video autoplay loop muted playsinline class="hero-video" style="object-fit: cover; object-position: center 30%;">
+        <source src="{{ asset('videos/video_UPEA_4k.mp4') }}" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    
+    <!-- NAVBAR STICKY -->
+    <nav class="relative z-20 border-b sticky-nav border-white/20">
         <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
                 <a href="{{ route('home') }}" class="flex items-center gap-2 transition hover:opacity-80">
                     <div class="flex items-center justify-center w-9 h-9 bg-gradient-to-br from-primary to-secondary rounded-xl">
-                        <span class="text-lg text-white ">🦅</span>
+                        <span class="text-lg text-white">🦅</span>
                     </div>
                     <span class="text-xl font-bold text-slate-800 dark:text-white">UniSocial</span>
                 </a>
                 
-                <!-- Botones de acción (dropdowns) -->
                 <div class="flex items-center gap-1">
-                    <!-- Dropdown Carreras -->
-                    <div class="relative dropdown-trigger">
-                        <button class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
-                            📚 Carreras
-                        </button>
-                        <div class="absolute left-0 z-50 w-64 mt-2 bg-white border border-gray-200 shadow-xl dark:bg-dark-surface rounded-xl dropdown-menu top-full dark:border-gray-700">
-                            <div class="p-2 text-xs font-semibold text-gray-500 border-b border-gray-700 dark:text-gray-400 dark:border-gray-700">
-                                <div class="px-3 py-2 ">
-                                    Todas las carreras
-                                </div>
-                                @foreach(\App\Models\Career::all() as $career)
-                                    <a href="{{ route('feed') }}?career_id={{ $career->id }}" 
-                                       class="flex items-center justify-between px-3 py-2 text-sm transition rounded-lg hover:bg-gray-700 dark:hover:bg-gray-700">
-                                        <span>{{ $career->nombre }}</span>
-                                        <span class="text-xs text-gray-400">{{ $career->users()->count() }} estudiantes</span>
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Dropdown Fechas -->
-                    <div class="relative dropdown-trigger">
-                        <button class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
-                            📅 Fechas
-                        </button>
-                        <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-200 shadow-xl dropdown-menu top-full dark:bg-dark-surface rounded-xl dark:border-gray-700">
-                            <div class="p-2">
-                                <a href="{{ route('feed') }}" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Todas las fechas
-                                </a>
-                                <a href="{{ route('feed') }}?date_filter=today" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Hoy
-                                </a>
-                                <a href="{{ route('feed') }}?date_filter=week" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Última semana
-                                </a>
-                                <a href="{{ route('feed') }}?date_filter=month" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Último mes
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Dropdown Ordenar -->
-                    <div class="relative dropdown-trigger">
-                        <button class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
-                            🔽 Ordenar
-                        </button>
-                        <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-200 shadow-xl dropdown-menu top-full dark:bg-dark-surface rounded-xl dark:border-gray-700">
-                            <div class="p-2">
-                                <a href="{{ route('feed') }}" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Más recientes
-                                </a>
-                                <a href="{{ route('feed') }}?sort=most_commented" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    💬 Más comentados
-                                </a>
-                                <a href="{{ route('feed') }}?sort=most_reactions" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    ❤️ Más reaccionados
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Login / Register / Dark Mode -->
                     @auth
-                        <a href="{{ route('feed') }}" class="px-4 py-2 ml-2 text-white transition-all duration-300 rounded-lg nav-btn bg-primary hover:bg-secondary">
+                        <a href="{{ route('feed') }}" class="px-4 py-2 ml-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
                             📱 Feed
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
+                        <!-- Botones que controlan el carrusel -->
+                        <button @click="activePanel = 2" class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
                             Iniciar sesión
-                        </a>
-                        <a href="{{ route('register') }}" class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-secondary hover:bg-primary">
+                        </button>
+                        <button @click="activePanel = 3" class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
                             Registrarse
-                        </a>
+                        </button>
                     @endauth
                     
-                    <!-- Botón modo oscuro -->
                     <button @click="darkMode = !darkMode" class="p-2 ml-1 transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
                         <span x-show="!darkMode" class="text-yellow-400">🌞</span>
                         <span x-show="darkMode" class="text-gray-300">🌙</span>
@@ -231,52 +148,208 @@
             </div>
         </div>
     </nav>
-    
-    <!-- HERO SECTION CON VIDEO COMPLETO (con botones y búsqueda) -->
     @if(Route::currentRouteName() == 'home')
-    <section class="relative h-[80vh] min-h-[500px] overflow-hidden">
-        <video autoplay loop muted playsinline class="hero-video" style="object-fit: cover; object-position: center 30%;">
-            <source src="{{ asset('videos/video_UPEA_4k.mp4') }}" type="video/mp4">
-        </video>
-        <div class="hero-overlay"></div>
-        <div class="absolute inset-0 flex flex-col items-center justify-center px-4 text-center hero-content">
-            <h1 class="mb-4 text-4xl font-bold text-white md:text-6xl lg:text-7xl animate-fade-in">
-                Conecta, Comparte y <span class="text-secondary">Crece</span>
-            </h1>
-            <p class="max-w-2xl mb-8 text-lg md:text-xl text-white/90 animate-slide-up">
-                La red social exclusiva para la comunidad universitaria. Comparte noticias, eventos y conecta con estudiantes de tu carrera.
-            </p>
-            
-            <!-- Barra de búsqueda -->
-            <div class="w-full max-w-3xl p-2 bg-white/10 backdrop-blur-md rounded-2xl animate-slide-up">
-                <form action="{{ route('feed') }}" method="GET" class="flex flex-col gap-2 md:flex-row">
-                    <input type="text" name="search" placeholder="Buscar publicaciones, eventos, noticias..." 
-                           class="flex-1 px-4 py-3 text-slate-800 bg-white/20 placeholder-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary">
-                    <button type="submit" class="px-6 py-3 font-semibold text-white transition-all duration-300 bg-secondary hover:bg-primary rounded-xl hover:scale-105">
-                        🔍 Buscar
-                    </button>
-                </form>
-            </div>
-            
-            <!-- Categorías rápidas -->
-            <div class="flex flex-wrap justify-center gap-3 mt-8">
-                <a href="{{ route('feed') }}?type=evento" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
-                    📅 Eventos
-                </a>
-                <a href="{{ route('feed') }}?type=noticia" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
-                    📰 Noticias
-                </a>
-                <a href="{{ route('feed') }}?type=curso" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
-                    📚 Cursos
-                </a>
-                <a href="{{ route('feed') }}?type=aviso" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
-                    ⚠️ Avisos
-                </a>
-                <a href="{{ route('feed') }}?sort=most_commented" class="px-4 py-2 text-white transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">
-                    🔥 Tendencias
-                </a>
+    <!-- CARRUSEL DE PANELES -->
+    <div class="relative z-10 flex items-center justify-center min-h-[calc(100vh-4rem)] px-4">
+        <!-- Botón anterior (solo visible si no estamos en el panel 1) -->
+        <button x-show="activePanel > 1" @click="activePanel--" 
+                class="absolute z-30 p-3 transition-all duration-300 rounded-full left-4 md:left-8 bg-white/20 backdrop-blur-sm hover:bg-white/30 hover:scale-110">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+        
+        <!-- Contenedor de paneles -->
+        <div class="w-full max-w-4xl overflow-hidden">
+            <div class="flex transition-transform duration-500 ease-out"
+                 :style="'transform: translateX(-' + ((activePanel - 1) * 100) + '%);'">
+                
+                <!-- PANEL 1: HERO -->
+                <div class="flex-shrink-0 w-full px-4">
+                    <div class="text-center text-white animate-fade-in">
+                        <h1 class="mb-4 text-4xl font-bold md:text-6xl lg:text-7xl">
+                            Conecta, Comparte y <span class="text-secondary">Crece</span>
+                        </h1>
+                        <p class="max-w-2xl mx-auto mb-8 text-lg md:text-xl text-white/90">
+                            La red social exclusiva para la comunidad universitaria. Comparte noticias, eventos y conecta con estudiantes de tu carrera.
+                        </p>
+                        
+                        <!-- Barra de búsqueda -->
+                        <div class="w-full max-w-3xl p-2 mx-auto mb-8 bg-white/10 backdrop-blur-md rounded-2xl">
+                            <form action="{{ route('feed') }}" method="GET" class="flex flex-col gap-2 md:flex-row">
+                                <input type="text" name="search" placeholder="Buscar publicaciones, eventos, noticias..." 
+                                       class="flex-1 px-4 py-3 text-slate-800 bg-white/20 placeholder-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary">
+                                <button type="submit" class="px-6 py-3 font-semibold text-white transition-all duration-300 bg-secondary hover:bg-primary rounded-xl hover:scale-105">
+                                    🔍 Buscar
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Categorías rápidas -->
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <a href="{{ route('feed') }}?type=evento" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">📅 Eventos</a>
+                            <a href="{{ route('feed') }}?type=noticia" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">📰 Noticias</a>
+                            <a href="{{ route('feed') }}?type=curso" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">📚 Cursos</a>
+                            <a href="{{ route('feed') }}?type=aviso" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">⚠️ Avisos</a>
+                            <a href="{{ route('feed') }}?sort=most_commented" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">🔥 Tendencias</a>
+                        </div>
+                        
+                        <!-- Indicador de scroll -->
+                        <div class="mt-12">
+                            <div class="mb-1 text-sm text-white/60">Desliza</div>
+                            <svg class="w-5 h-5 mx-auto text-white/60 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PANEL 2: LOGIN -->
+                <div class="flex-shrink-0 w-full px-4">
+                    <div class="max-w-md p-8 mx-auto bg-white shadow-2xl dark:bg-dark-surface rounded-2xl animate-slide-right">
+                        <div class="mb-6 text-center">
+                            <div class="flex items-center justify-center w-16 h-16 mx-auto shadow-lg bg-gradient-to-br from-primary to-secondary rounded-2xl">
+                                <span class="text-3xl">🔐</span>
+                            </div>
+                            <h2 class="mt-3 text-2xl font-bold text-text-primary dark:text-dark-text-primary">Iniciar sesión</h2>
+                            <p class="text-sm text-text-secondary dark:text-dark-text-secondary">Accede a tu cuenta</p>
+                        </div>
+                        
+                        <form method="POST" action="{{ route('login') }}">
+                            @csrf
+                            <div class="mb-4">
+                                <label class="block mb-2 font-semibold text-text-primary dark:text-dark-text-primary">Correo electrónico</label>
+                                <input type="email" name="email" value="{{ old('email') }}" required
+                                       class="w-full px-4 py-3 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm text-red-500" />
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block mb-2 font-semibold text-text-primary dark:text-dark-text-primary">Contraseña</label>
+                                <input type="password" name="password" required
+                                       class="w-full px-4 py-3 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm text-red-500" />
+                            </div>
+                            
+                            <div class="flex items-center justify-between mb-6">
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="remember" class="rounded text-secondary focus:ring-secondary">
+                                    <span class="ml-2 text-sm text-text-secondary">Recordarme</span>
+                                </label>
+                                <a href="{{ route('password.request') }}" class="text-sm transition text-secondary hover:text-primary">¿Olvidaste tu contraseña?</a>
+                            </div>
+                            
+                            <button type="submit" class="w-full py-3 font-bold text-white transition-all duration-300 transform bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary rounded-xl hover:scale-105">
+                                Ingresar
+                            </button>
+                        </form>
+                        
+                        <p class="mt-6 text-center text-text-secondary">
+                            ¿No tienes cuenta?
+                            <button @click="activePanel = 3" class="font-semibold transition text-secondary hover:text-primary">
+                                Regístrate
+                            </button>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- PANEL 3: REGISTER -->
+                <div class="flex-shrink-0 w-full px-4">
+                    <div class="max-w-md p-8 mx-auto bg-white shadow-2xl dark:bg-dark-surface rounded-2xl animate-slide-right">
+                        <div class="mb-6 text-center">
+                            <div class="flex items-center justify-center w-16 h-16 mx-auto shadow-lg bg-gradient-to-br from-primary to-secondary rounded-2xl">
+                                <span class="text-3xl">✨</span>
+                            </div>
+                            <h2 class="mt-3 text-2xl font-bold text-text-primary dark:text-dark-text-primary">Crear cuenta</h2>
+                            <p class="text-sm text-text-secondary dark:text-dark-text-secondary">Únete a la comunidad</p>
+                        </div>
+                        
+                        <form method="POST" action="{{ route('register') }}">
+                            @csrf
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="mb-3">
+                                    <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Nombre</label>
+                                    <input type="text" name="name" value="{{ old('name') }}" required
+                                           class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                    <x-input-error :messages="$errors->get('name')" class="mt-1 text-xs text-red-500" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Apellidos</label>
+                                    <input type="text" name="lastname" value="{{ old('lastname') }}" required
+                                           class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                    <x-input-error :messages="$errors->get('lastname')" class="mt-1 text-xs text-red-500" />
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Correo electrónico</label>
+                                <input type="email" name="email" value="{{ old('email') }}" required
+                                       class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                <x-input-error :messages="$errors->get('email')" class="mt-1 text-xs text-red-500" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Carrera</label>
+                                <select name="career_id" required class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                    <option value="">Selecciona</option>
+                                    @foreach(App\Models\Career::all() as $career)
+                                        <option value="{{ $career->id }}">{{ $career->nombre }}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('career_id')" class="mt-1 text-xs text-red-500" />
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="mb-3">
+                                    <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Contraseña</label>
+                                    <input type="password" name="password" required
+                                           class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Confirmar</label>
+                                    <input type="password" name="password_confirmation" required
+                                           class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                </div>
+                            </div>
+                            <x-input-error :messages="$errors->get('password')" class="mt-1 text-xs text-red-500" />
+                            
+                            <button type="submit" class="w-full py-3 mt-4 font-bold text-white transition-all duration-300 transform bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary rounded-xl hover:scale-105">
+                                Registrarse
+                            </button>
+                        </form>
+                        
+                        <p class="mt-6 text-center text-text-secondary">
+                            ¿Ya tienes cuenta?
+                            <button @click="activePanel = 2" class="font-semibold transition text-secondary hover:text-primary">
+                                Inicia sesión
+                            </button>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
+        
+        <!-- Botón siguiente (solo visible si no estamos en el panel 3) -->
+        <button x-show="activePanel < 3" @click="activePanel++" 
+                class="absolute z-30 p-3 transition-all duration-300 rounded-full right-4 md:right-8 bg-white/20 backdrop-blur-sm hover:bg-white/30 hover:scale-110">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+    </div>
+    
+    <!-- Indicadores de panel (dots) -->
+    <div class="fixed left-0 right-0 z-20 flex justify-center gap-2 bottom-6">
+        <button @click="activePanel = 1" class="transition-all duration-300">
+            <div class="w-2 h-2 rounded-full" :class="activePanel === 1 ? 'w-6 bg-secondary' : 'bg-white/50'"></div>
+        </button>
+        <button @click="activePanel = 2" class="transition-all duration-300">
+            <div class="w-2 h-2 rounded-full" :class="activePanel === 2 ? 'w-6 bg-secondary' : 'bg-white/50'"></div>
+        </button>
+        <button @click="activePanel = 3" class="transition-all duration-300">
+            <div class="w-2 h-2 rounded-full" :class="activePanel === 3 ? 'w-6 bg-secondary' : 'bg-white/50'"></div>
+        </button>
+    </div>
     </section>
     @endif
     
