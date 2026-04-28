@@ -69,6 +69,51 @@
             color: #2A6B9E !important;
         }
         
+        /* Efecto de brillo para botones de login/register */
+        .nav-btn.brillo {
+            animation: brillar 0.6s ease-in-out;
+        }
+        
+        @keyframes brillar {
+            0% { 
+                background-color: #1A3C5E !important; 
+                color: #C4A35A !important;
+                transform: scale(1.05);
+            }
+            50% { 
+                background-color: #C4A35A !important; 
+                color: #1A3C5E !important;
+                transform: scale(1.1);
+            }
+            100% { 
+                background-color: #1A3C5E !important; 
+                color: #C4A35A !important;
+                transform: scale(1.05);
+            }
+        }
+        
+        .dark .nav-btn.brillo {
+            animation: brillar-dark 0.6s ease-in-out;
+        }
+        
+        @keyframes brillar-dark {
+            0% { 
+                background-color: #D4B06A !important; 
+                color: #2A6B9E !important;
+                transform: scale(1.05);
+            }
+            50% { 
+                background-color: #2A6B9E !important; 
+                color: #D4B06A !important;
+                transform: scale(1.1);
+            }
+            100% { 
+                background-color: #D4B06A !important; 
+                color: #2A6B9E !important;
+                transform: scale(1.05);
+            }
+        }
+        
         .post-card {
             transition: all 0.3s ease;
             border-radius: 0.75rem;
@@ -103,6 +148,25 @@
         
         .animate-fade-in { animation: fadeIn 0.6s ease-out; }
         .animate-slide-right { animation: slideInRight 0.5s ease-out; }
+        
+        /* Contenedor principal para noticias y contenido */
+        .content-container {
+            position: relative;
+            z-index: 20;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            max-width: 100%;
+        }
+        
+        @media (min-width: 768px) {
+            .content-container {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+                padding-top: 3rem;
+            }
+        }
     </style>
 </head>
 <body class="overflow-x-hidden transition-colors duration-300"
@@ -149,7 +213,7 @@
     </nav>
     @if(Route::currentRouteName() == 'home')
     <!-- CARRUSEL DE PANELES -->
-    <div class="relative z-10 flex items-center justify-center min-h-[500px] px-4">
+    <div class="relative z-10 flex items-center justify-center min-h-[700px] px-4">
         <button x-show="activePanel > 1" @click="activePanel--" 
                 class="absolute z-30 p-3 transition-all duration-300 rounded-full left-4 md:left-8 bg-white/20 backdrop-blur-sm hover:bg-white/30 hover:scale-110">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,7 +393,9 @@
     </div>
     @endif
     
-    <!-- TENDENCIAS DE LA SEMANA (3x2) -->
+    <!-- CONTENEDOR PRINCIPAL CON Z-INDEX ELEVADO -->
+    <div class="relative z-20 bg-background dark:bg-dark-background content-container max-w-7xl mx-auto">
+        <!-- TENDENCIAS DE LA SEMANA (3x2) -->
         <section class="mb-12">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
@@ -343,7 +409,7 @@
                     <a href="{{ route('posts.show', $post) }}" class="block overflow-hidden transition-all duration-300 shadow-md post-card bg-surface dark:bg-dark-surface rounded-xl hover:shadow-xl">
                         @if($post->images && count(json_decode($post->images, true)) > 0)
                             @php $images = json_decode($post->images, true); @endphp
-                            <img src="{{ $images[0] }}" alt="{{ $post->title }}" class="object-cover w-full h-40">
+                            <img src="{{ $images[0] }}" alt="{{ $post->title }}" class="object-contain w-full h-96">
                         @else
                             <div class="flex items-center justify-center w-full h-40 bg-gradient-to-br from-primary/20 to-secondary/20">
                                 <span class="text-3xl">🦅</span>
@@ -399,7 +465,7 @@
                             @if(is_array($images) && count($images) > 0)
                                 <div class="grid grid-cols-2 gap-2 mb-4">
                                     @foreach(array_slice($images, 0, 2) as $image)
-                                        <img src="{{ $image }}" alt="Imagen" class="object-cover w-full rounded-lg h-36">
+                                        <img src="{{ $image }}" alt="Imagen" class="object-contain w-full rounded-lg h-80">
                                     @endforeach
                                 </div>
                             @endif
@@ -424,6 +490,51 @@
                                     <span class="count-{{ $key }} ml-1">({{ $post->reactions->where('type', $key)->count() }})</span>
                                 </button>
                             @endforeach
+                            
+                            <!-- Botón de comentarios -->
+                            <button class="comments-toggle-btn px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                    data-post-id="{{ $post->id }}">
+                                💬 Comentarios ({{ $post->comments->count() }})
+                            </button>
+                        </div>
+                        
+                        <!-- Sección de comentarios expandible -->
+                        <div class="comments-section hidden mt-4 pt-4 border-t" data-post-id="{{ $post->id }}">
+                            @if($post->comments && $post->comments->count() > 0)
+                                <div class="space-y-3 mb-4">
+                                    @foreach($post->comments as $comment)
+                                        <div class="p-3 bg-gray-50 dark:bg-dark-background rounded-lg">
+                                            <div class="flex items-start gap-2 mb-2">
+                                                <div class="flex items-center justify-center w-8 h-8 font-bold text-white text-xs rounded-full bg-gradient-to-br from-primary to-secondary">
+                                                    {{ substr($comment->user->name, 0, 1) }}
+                                                </div>
+                                                <div class="flex-1">
+                                                    <p class="font-semibold text-sm text-text-primary dark:text-dark-text-primary">
+                                                        {{ $comment->user->name }} {{ $comment->user->lastname }}
+                                                    </p>
+                                                    <p class="text-xs text-text-secondary dark:text-dark-text-secondary">
+                                                        {{ $comment->created_at->diffForHumans() }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <p class="text-sm text-text-secondary dark:text-dark-text-secondary">
+                                                {{ $comment->content }}
+                                            </p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-center text-text-secondary dark:text-dark-text-secondary py-4">
+                                    No hay comentarios aún. ¡Sé el primero!
+                                </p>
+                            @endif
+                            
+                            <!-- Botón para comentar -->
+                            <div class="text-center pt-2">
+                                <button class="comentar-btn text-secondary hover:text-primary font-semibold transition-colors duration-200">
+                                    Comentar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -437,7 +548,8 @@
                 {{ $posts->links() }}
             </div>
         </section>
-    </main>
+    </div>
+    <!-- FIN CONTENEDOR PRINCIPAL -->
     
     <!-- FOOTER -->
     <footer class="relative z-10 py-6 mt-12 bg-primary dark:bg-dark-primary">
@@ -453,8 +565,33 @@
             document.documentElement.classList.remove('dark');
         }
         
+        // Función para activar el efecto de brillo en botones de login/register
+        function activarBrilloLoginRegister() {
+            const loginBtn = document.querySelector('button[onclick*="activePanel = 2"]');
+            const registerBtn = document.querySelector('button[onclick*="activePanel = 3"]');
+            
+            if (loginBtn) {
+                loginBtn.classList.add('brillo');
+                setTimeout(() => {
+                    loginBtn.classList.remove('brillo');
+                }, 600);
+            }
+            
+            setTimeout(() => {
+                if (registerBtn) {
+                    registerBtn.classList.add('brillo');
+                    setTimeout(() => {
+                        registerBtn.classList.remove('brillo');
+                    }, 600);
+                }
+            }, 500);
+        }
+        
         document.querySelectorAll('.reaction-btn').forEach(btn => {
             btn.addEventListener('click', async function() {
+                // Activar efecto de brillo
+                activarBrilloLoginRegister();
+                
                 const postId = this.dataset.postId;
                 const type = this.dataset.type;
                 
@@ -496,6 +633,13 @@
                 } catch (error) {
                     console.error('Error:', error);
                 }
+            });
+        });
+        
+        // Manejador para el botón de "Comentar"
+        document.querySelectorAll('.comentar-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                activarBrilloLoginRegister();
             });
         });
     </script>
