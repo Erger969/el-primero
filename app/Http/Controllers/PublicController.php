@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Reaction;
 
 class PublicController extends Controller
 {
@@ -26,6 +27,15 @@ class PublicController extends Controller
                 ->get();
         });
         
-        return view('home', compact('posts', 'trendingPosts'));
+        // Obtener reacciones del usuario actual (si está logueado)
+        $userReactions = [];
+        if (auth()->check()) {
+            $userReactions = Reaction::where('user_id', auth()->id())
+                ->whereIn('post_id', $posts->pluck('id'))
+                ->get()
+                ->keyBy('post_id');
+        }
+        
+        return view('home', compact('posts', 'trendingPosts', 'userReactions'));
     }
 }

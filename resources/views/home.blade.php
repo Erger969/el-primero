@@ -567,8 +567,19 @@
         
         // Función para activar el efecto de brillo en botones de login/register
         function activarBrilloLoginRegister() {
-            const loginBtn = document.querySelector('button[onclick*="activePanel = 2"]');
-            const registerBtn = document.querySelector('button[onclick*="activePanel = 3"]');
+            // Buscar botones por texto en lugar de onclick
+            const buttons = document.querySelectorAll('.nav-btn');
+            let loginBtn = null;
+            let registerBtn = null;
+            
+            buttons.forEach(btn => {
+                const text = btn.innerText || btn.textContent;
+                if (text.includes('Iniciar sesión')) {
+                    loginBtn = btn;
+                } else if (text.includes('Registrarse') && !text.includes('Regístrate')) {
+                    registerBtn = btn;
+                }
+            });
             
             if (loginBtn) {
                 loginBtn.classList.add('brillo');
@@ -640,6 +651,51 @@
         document.querySelectorAll('.comentar-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 activarBrilloLoginRegister();
+            });
+        });
+
+        // Toggle de comentarios
+        document.querySelectorAll('.comments-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const postId = this.dataset.postId;
+                const commentsSection = document.querySelector(`.comments-section[data-post-id="${postId}"]`);
+                
+                if (commentsSection) {
+                    // Cerrar otros comentarios abiertos
+                    document.querySelectorAll('.comments-section').forEach(section => {
+                        if (section !== commentsSection) {
+                            section.classList.add('hidden');
+                        }
+                    });
+                    
+                    commentsSection.classList.toggle('hidden');
+                }
+            });
+        });
+
+        // Manejar clic en "Comentar" dentro de cada sección
+        document.querySelectorAll('.comentar-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const commentsSection = this.closest('.comments-section');
+                if (commentsSection) {
+                    const postId = commentsSection.dataset.postId;
+                    // Aquí puedes agregar la lógica para mostrar un formulario de comentario
+                    // Por ahora solo muestra una alerta o puedes redirigir al login si no está autenticado
+                    @auth
+                        alert('Funcionalidad de comentario - Próximamente podrás comentar aquí mismo');
+                        // Aquí podrías mostrar un textarea para comentar
+                    @else
+                        activarBrilloLoginRegister();
+                        // Cambiar al panel de login
+                        if (typeof activePanel !== 'undefined') {
+                            activePanel = 2;
+                        } else if (window.Alpine && window.Alpine.store('activePanel')) {
+                            window.Alpine.store('activePanel', 2);
+                        } else {
+                            window.location.href = "{{ route('login') }}";
+                        }
+                    @endauth
+                }
             });
         });
     </script>
