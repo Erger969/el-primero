@@ -86,14 +86,20 @@ class ProfileController extends Controller
         $user = Auth::user();
         
         $request->validate([
+            'name' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'career_id' => 'required|exists:careers,id',
             'descripcion' => 'nullable|string|max:500',
         ]);
         
         $user->update([
+            'name' => $request->name,
+            'lastname' => $request->lastname,
+            'career_id' => $request->career_id,
             'descripcion' => $request->descripcion,
         ]);
         
-        return redirect()->route('profile.show', $user->id)->with('success', 'Perfil actualizado.');
+        return redirect()->route('profile.show', $user->id)->with('success', 'Perfil actualizado exitosamente.');
     }
 
     // Solicitar ascenso a Master
