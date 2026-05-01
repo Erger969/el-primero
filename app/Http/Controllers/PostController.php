@@ -61,6 +61,31 @@ class PostController extends Controller
         } else {
             $query->orderBy('created_at', 'desc');
         }
+
+        // Lógica de búsqueda categorizada
+        $search = $request->input('search');
+        $searchType = $request->input('search_type', 'title');
+        $searchCounts = ['title' => 0, 'content' => 0, 'user' => 0];
+
+        if ($search) {
+            // Calcular conteos para cada categoría (respetando la visibilidad)
+            $searchCounts['title'] = Post::visible()->where('title', 'like', "%{$search}%")->count();
+            $searchCounts['content'] = Post::visible()->where('content', 'like', "%{$search}%")->count();
+            $searchCounts['user'] = Post::visible()->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")->orWhere('lastname', 'like', "%{$search}%");
+            })->count();
+
+            // Filtrar según el tipo seleccionado
+            if ($searchType === 'content') {
+                $query->where('content', 'like', "%{$search}%");
+            } elseif ($searchType === 'user') {
+                $query->whereHas('user', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")->orWhere('lastname', 'like', "%{$search}%");
+                });
+            } else {
+                $query->where('title', 'like', "%{$search}%");
+            }
+        }
         
         $posts = $query->paginate(10);
         
@@ -72,7 +97,7 @@ class PostController extends Controller
         // Obtener carreras para el filtro
         $careers = Career::orderBy('nombre')->get();
         
-        return view('feed', compact('posts', 'userReactions', 'careers'));
+        return view('feed', compact('posts', 'userReactions', 'careers', 'searchCounts', 'search', 'searchType'));
     }
 
     // Mostrar formulario para crear publicación

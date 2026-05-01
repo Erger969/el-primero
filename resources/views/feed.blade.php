@@ -294,6 +294,49 @@
             
             <!-- Feed de Publicaciones -->
             <div class="md:col-span-3 space-y-6">
+                <!-- SECCIÓN DE RESULTADOS DE BÚSQUEDA (Si existe búsqueda) -->
+                @if($search)
+                    <div class="mb-8 animate-fade-in">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
+                                    🔍 Resultados para: <span class="text-secondary">"{{ $search }}"</span>
+                                </h2>
+                                <p class="text-sm text-text-secondary dark:text-dark-text-secondary mt-1">
+                                    Filtrando por: <span class="font-bold text-primary">{{ $searchType === 'title' ? 'Títulos' : ($searchType === 'content' ? 'Descripciones' : 'Usuarios') }}</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        {{-- Selectores de Categoría (Tabs) --}}
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <a href="{{ route('feed', array_merge(request()->except(['search_type']), ['search_type' => 'title'])) }}" 
+                               class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 {{ $searchType === 'title' ? 'bg-secondary text-white shadow-md' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                                <span>📌 Títulos</span>
+                                <span class="px-1.5 py-0.5 rounded-lg text-[10px] {{ $searchType === 'title' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
+                                    {{ $searchCounts['title'] }}
+                                </span>
+                            </a>
+                            
+                            <a href="{{ route('feed', array_merge(request()->except(['search_type']), ['search_type' => 'content'])) }}" 
+                               class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 {{ $searchType === 'content' ? 'bg-secondary text-white shadow-md' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                                <span>📝 Descripciones</span>
+                                <span class="px-1.5 py-0.5 rounded-lg text-[10px] {{ $searchType === 'content' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
+                                    {{ $searchCounts['content'] }}
+                                </span>
+                            </a>
+                            
+                            <a href="{{ route('feed', array_merge(request()->except(['search_type']), ['search_type' => 'user'])) }}" 
+                               class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 {{ $searchType === 'user' ? 'bg-secondary text-white shadow-md' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                                <span>👥 Usuarios</span>
+                                <span class="px-1.5 py-0.5 rounded-lg text-[10px] {{ $searchType === 'user' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
+                                    {{ $searchCounts['user'] }}
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
                 @forelse($posts as $post)
                     <div class="shadow-md post-card bg-surface dark:bg-dark-surface rounded-2xl overflow-hidden">
                         <div class="p-6">

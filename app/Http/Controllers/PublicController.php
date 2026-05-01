@@ -9,12 +9,36 @@ use App\Models\Reaction;
 
 class PublicController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::with(['user', 'comments.user'])
-            ->visible()
-            ->orderBy('created_at', 'desc')
-            ->paginate(6);
+        $query = Post::with(['user', 'comments.user'])
+            ->visible();
+
+        $search = $request->input('search');
+        $searchType = $request->input('search_type', 'title');
+        $searchCounts = ['title' => 0, 'content' => 0, 'user' => 0];
+
+        if ($search) {
+            // Calcular conteos para cada categoría
+            $searchCounts['title'] = Post::visible()->where('title', 'like', "%{$search}%")->count();
+            $searchCounts['content'] = Post::visible()->where('content', 'like', "%{$search}%")->count();
+            $searchCounts['user'] = Post::visible()->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")->orWhere('lastname', 'like', "%{$search}%");
+            })->count();
+
+            // Filtrar según el tipo seleccionado
+            if ($searchType === 'content') {
+                $query->where('content', 'like', "%{$search}%");
+            } elseif ($searchType === 'user') {
+                $query->whereHas('user', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")->orWhere('lastname', 'like', "%{$search}%");
+                });
+            } else {
+                $query->where('title', 'like', "%{$search}%");
+            }
+        }
+
+        $posts = $query->orderBy('created_at', 'desc')->paginate(6);
         
         // Usar caché para tendencias (se actualiza cada hora)
         $trendingPosts = Cache::remember('trending_posts', 3600, function () {
@@ -36,6 +60,6 @@ class PublicController extends Controller
                 ->keyBy('post_id');
         }
         
-        return view('home', compact('posts', 'trendingPosts', 'userReactions'));
+        return view('home', compact('posts', 'trendingPosts', 'userReactions', 'searchCounts', 'search', 'searchType'));
     }
 }

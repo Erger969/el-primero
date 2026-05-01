@@ -374,7 +374,54 @@
                 </div>
             </div>
         </section>
-        <!-- TENDENCIAS DE LA SEMANA (3x2) -->
+        <!-- SECCIÓN DE RESULTADOS DE BÚSQUEDA (Si existe búsqueda) -->
+        @if($search)
+            <section class="mb-12 animate-fade-in">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
+                            🔍 Resultados para: <span class="text-secondary">"{{ $search }}"</span>
+                        </h2>
+                        <p class="text-sm text-text-secondary dark:text-dark-text-secondary mt-1">
+                            Hemos encontrado matches en las siguientes categorías:
+                        </p>
+                    </div>
+                    <a href="{{ route('home') }}" class="text-sm font-semibold text-primary hover:text-secondary transition-colors bg-primary/5 dark:bg-primary/10 px-4 py-2 rounded-xl">
+                        ✖ Limpiar búsqueda
+                    </a>
+                </div>
+
+                {{-- Selectores de Categoría (Tabs) --}}
+                <div class="flex flex-wrap gap-3 mb-8">
+                    <a href="{{ route('home', ['search' => $search, 'search_type' => 'title']) }}" 
+                       class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all duration-300 {{ $searchType === 'title' ? 'bg-secondary text-white shadow-lg scale-105' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                        <span>📌 Títulos</span>
+                        <span class="px-2 py-0.5 rounded-lg text-xs {{ $searchType === 'title' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
+                            {{ $searchCounts['title'] }}
+                        </span>
+                    </a>
+                    
+                    <a href="{{ route('home', ['search' => $search, 'search_type' => 'content']) }}" 
+                       class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all duration-300 {{ $searchType === 'content' ? 'bg-secondary text-white shadow-lg scale-105' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                        <span>📝 Descripciones</span>
+                        <span class="px-2 py-0.5 rounded-lg text-xs {{ $searchType === 'content' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
+                            {{ $searchCounts['content'] }}
+                        </span>
+                    </a>
+                    
+                    <a href="{{ route('home', ['search' => $search, 'search_type' => 'user']) }}" 
+                       class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all duration-300 {{ $searchType === 'user' ? 'bg-secondary text-white shadow-lg scale-105' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+                        <span>👥 Usuarios</span>
+                        <span class="px-2 py-0.5 rounded-lg text-xs {{ $searchType === 'user' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
+                            {{ $searchCounts['user'] }}
+                        </span>
+                    </a>
+                </div>
+            </section>
+        @endif
+        
+        <!-- TENDENCIAS DE LA SEMANA (3x2) - Solo si no hay búsqueda -->
+        @if(!$search)
         <section class="mb-12">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
@@ -422,11 +469,16 @@
                 @endforelse
             </div>
         </section>
+        @endif
         
-        <!-- PUBLICACIONES RECIENTES -->
+        <!-- PUBLICACIONES RECIENTES / RESULTADOS -->
         <section>
             <h2 class="mb-6 text-2xl font-bold text-text-primary dark:text-dark-text-primary">
-                📰 Últimas publicaciones
+                @if($search)
+                    📰 Resultados en <span class="text-secondary">{{ $searchType === 'title' ? 'Títulos' : ($searchType === 'content' ? 'Descripciones' : 'Usuarios') }}</span>
+                @else
+                    📰 Últimas publicaciones
+                @endif
             </h2>
             
             @forelse($posts as $post)
