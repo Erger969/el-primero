@@ -10,28 +10,16 @@
             </a>
             
             <div class="flex items-center gap-3">
-                <!-- Dropdown Carreras -->
-                <div class="relative hidden md:block dropdown-trigger">
-                    <button class="px-4 py-2 text-white font-medium transition-all duration-300 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm">
-                        📚 Carreras
-                    </button>
-                    <div class="absolute left-0 z-50 w-64 mt-2 bg-white border border-gray-200 shadow-xl dark:bg-[#1e293b] rounded-xl dropdown-menu top-full dark:border-gray-700">
-                        <div class="p-2">
-                            <div class="px-3 py-2 text-xs font-semibold text-gray-500 border-b dark:text-gray-400 dark:border-gray-700">
-                                Todas las carreras
-                            </div>
-                            @foreach(\App\Models\Career::all() as $career)
-                                <a href="{{ route('feed') }}?career_id={{ $career->id }}" 
-                                   class="flex items-center justify-between px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                    <span>{{ $career->nombre }}</span>
-                                    <span class="text-xs text-gray-400">{{ $career->users()->count() }} estudiantes</span>
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-
                 @auth
+                <!-- Botón Inicio / Feed -->
+                <a href="{{ route('feed') }}" class="hidden sm:flex items-center gap-2 px-4 py-2 text-white font-medium transition-all duration-300 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm shadow-sm hover:scale-105">
+                    🏠 <span class="hidden md:inline text-sm">Inicio</span>
+                </a>
+
+                <!-- Botón Nueva Publicación -->
+                <a href="{{ route('posts.create') }}" class="flex items-center gap-2 px-4 py-2 text-white font-bold transition-all duration-300 rounded-xl bg-gradient-to-r from-[#C4A35A] to-[#D4B06A] hover:from-[#1A3C5E] hover:to-[#2A6B9E] backdrop-blur-sm shadow-md hover:shadow-lg hover:-translate-y-0.5" title="Crear Publicación">
+                    ➕ <span class="hidden sm:inline text-sm">Crear</span>
+                </a>
                 <!-- Botón Mi Perfil -->
                 <a href="{{ route('profile.show', Auth::id()) }}" class="flex items-center gap-2 px-4 py-2 text-white font-medium transition-all duration-300 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm shadow-sm hover:scale-105">
                     <div class="flex items-center justify-center w-6 h-6 text-xs font-bold text-white rounded-full bg-gradient-to-br from-[#1A3C5E] to-[#C4A35A]">
