@@ -9,11 +9,23 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>UniSocial - Feed de Noticias</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Video hero */
+        :root {
+            --primary: #1A3C5E;
+            --secondary: #C4A35A;
+            --secondary-light: #D4B06A;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
         .hero-video {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -23,34 +35,69 @@
         }
         
         .hero-overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(26, 60, 94, 0.85) 0%, rgba(196, 163, 90, 0.75) 100%);
+            background: linear-gradient(135deg, rgba(10, 22, 32, 0.9) 0%, rgba(26, 60, 94, 0.7) 100%);
             z-index: 1;
         }
         
-        .hero-content {
+        .glass-nav {
+            backdrop-filter: blur(16px);
+            background-color: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dark .glass-nav {
+            background-color: rgba(10, 22, 32, 0.7);
+        }
+        
+        .nav-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #2A6B9E 100%);
+            box-shadow: 0 4px 15px rgba(26, 60, 94, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+            box-shadow: 0 4px 15px rgba(196, 163, 90, 0.3);
+        }
+
+        .post-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .dark .post-card {
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            background-color: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(8px);
+        }
+        
+        .post-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            border-color: var(--secondary);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+        
+        .content-container {
             position: relative;
-            z-index: 2;
+            z-index: 20;
+            padding: 4rem 1rem;
         }
-        
-        /* Navbar fijo (sticky) con blur */
-        .sticky-nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(12px);
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .dark .sticky-nav {
-            background-color: rgba(10, 22, 32, 0.8);
-        }
-        
+
         /* Dropdown menus */
         .dropdown-menu {
             opacity: 0;
@@ -64,115 +111,46 @@
             visibility: visible;
             transform: translateY(0);
         }
-        
-        /* Efecto hover para tarjetas */
-        .post-card {
-            transition: all 0.3s ease;
-            border-radius: 0.75rem;
-        }
-        
-        .post-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            border-radius: 1rem;
-        }
-        
-        /* Botones de reacción */
-        .reaction-btn {
-            transition: all 0.2s ease;
-        }
-        
-        .reaction-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .reaction-btn:active {
-            transform: scale(0.95);
-        }
-        
-        /* Botones de navbar */
-        .light .nav-btn {
-            transition: all 0.3s ease;
-            color: black !important;
-        }
 
-        .dark .nav-btn {
-            transition: all 0.3s ease;
-            color: white !important;
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
         }
-        
-        .light .nav-btn:hover {
-            background-color: #1A3C5E !important;
-            color: #C4A35A !important;
-        }
-        
-        .dark .nav-btn:hover {
-            background-color: #D4B06A !important;
-            color: #2A6B9E !important;
-        }
-        
-        /* Animaciones */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-fade-in { animation: fadeIn 0.8s ease-out; }
-        .animate-slide-up { animation: slideUp 0.6s ease-out; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
     </style>
 </head>
-<body class="transition-colors duration-300 bg-background dark:bg-dark-background text-text-primary dark:text-dark-text-primary"
-      :class="{ 'light': !$store.darkMode.value, 'dark': $store.darkMode.value }">
+<body class="overflow-x-hidden transition-colors duration-300"
+      x-data="{ 
+          darkMode: localStorage.getItem('darkMode') === 'true',
+          activePanel: 1,
+          openComments: {},
+      }" 
+      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" 
+      :class="{ 'light': !darkMode, 'dark': darkMode }">
     
-    <!-- HERO SECTION CON VIDEO -->
-    <section class="relative h-[60vh] min-h-[400px] overflow-hidden">
-        <video autoplay loop muted playsinline class="hero-video" style="object-fit: cover; object-position: center 30%;">
-            <source src="{{ asset('videos/video_UPEA_4k.mp4') }}" type="video/mp4">
-        </video>
-        <div class="hero-overlay"></div>
-        <div class="absolute inset-0 flex flex-col items-center justify-center px-4 text-center hero-content">
-            <h1 class="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl animate-fade-in">
-                Bienvenido, <span class="text-secondary">{{ Auth::user()->name }}</span>
-            </h1>
-            <p class="max-w-2xl mb-8 text-lg text-white/90 animate-slide-up">
-                Explora las últimas publicaciones, reacciona y conecta con tu comunidad universitaria.
-            </p>
-            
-            <!-- Barra de búsqueda rápida -->
-            <div class="w-full max-w-2xl p-2 bg-white/10 backdrop-blur-md rounded-2xl animate-slide-up">
-                <form action="{{ route('feed') }}" method="GET" class="flex flex-col gap-2 md:flex-row">
-                    <input type="text" name="search" placeholder="Buscar publicaciones..." 
-                           class="flex-1 px-4 py-3 text-slate-800 bg-white/20 placeholder-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary">
-                    <button type="submit" class="px-6 py-3 font-semibold text-white transition-all duration-300 bg-secondary hover:bg-primary rounded-xl hover:scale-105">
-                        🔍 Buscar
-                    </button>
-                </form>
-            </div>
-        </div>
-    </section>
+    <!-- Video de fondo fijo -->
+    <video autoplay loop muted playsinline class="hero-video" style="object-fit: cover; object-position: center 30%;">
+        <source src="{{ asset('videos/video_UPEA_4k.mp4') }}" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
     
-    <!-- NAVBAR STICKY (siempre visible) -->
-    <nav class="border-b sticky-nav border-white/20">
+    <!-- NAVBAR STICKY -->
+    <nav class="sticky top-0 z-50 glass-nav transition-all duration-500">
         <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <a href="{{ route('home') }}" class="flex items-center gap-2 transition hover:opacity-80">
-                    <div class="flex items-center justify-center w-9 h-9 bg-gradient-to-br from-primary to-secondary rounded-xl">
-                        <span class="text-lg text-white">🦅</span>
+            <div class="flex items-center justify-between h-20">
+                <a href="{{ route('home') }}" class="flex items-center gap-3 transition-transform hover:scale-105 group">
+                    <div class="flex items-center justify-center w-11 h-11 bg-gradient-to-br from-primary to-secondary rounded-2xl shadow-lg group-hover:rotate-12 transition-all duration-300">
+                        <span class="text-xl text-white">🦅</span>
                     </div>
-                    <span class="text-xl font-bold text-slate-800 dark:text-white">UniSocial</span>
+                    <span class="text-2xl font-bold tracking-tight text-white">UniSocial</span>
                 </a>
                 
-                <!-- Botones de acción (dropdowns) -->
-                <div class="flex items-center gap-1">
+                <div class="flex items-center gap-3">
                     <!-- Dropdown Carreras -->
-                    <div class="relative dropdown-trigger">
-                        <button class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
+                    <div class="relative hidden md:block dropdown-trigger">
+                        <button class="px-4 py-2 text-white font-medium transition-all duration-300 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm">
                             📚 Carreras
                         </button>
                         <div class="absolute left-0 z-50 w-64 mt-2 bg-white border border-gray-200 shadow-xl dark:bg-dark-surface rounded-xl dropdown-menu top-full dark:border-gray-700">
@@ -182,7 +160,7 @@
                                 </div>
                                 @foreach(\App\Models\Career::all() as $career)
                                     <a href="{{ route('feed') }}?career_id={{ $career->id }}" 
-                                       class="flex items-center justify-between px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                       class="flex items-center justify-between px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-text-primary dark:text-dark-text-primary">
                                         <span>{{ $career->nombre }}</span>
                                         <span class="text-xs text-gray-400">{{ $career->users()->count() }} estudiantes</span>
                                     </a>
@@ -190,77 +168,29 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Dropdown Fechas -->
+
+                    <!-- Dropdown Perfil -->
                     <div class="relative dropdown-trigger">
-                        <button class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
-                            📅 Fechas
-                        </button>
-                        <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-200 shadow-xl dropdown-menu top-full dark:bg-dark-surface rounded-xl dark:border-gray-700">
-                            <div class="p-2">
-                                <a href="{{ route('feed') }}" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Todas las fechas
-                                </a>
-                                <a href="{{ route('feed') }}?date_filter=today" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Hoy
-                                </a>
-                                <a href="{{ route('feed') }}?date_filter=week" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Última semana
-                                </a>
-                                <a href="{{ route('feed') }}?date_filter=month" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Último mes
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Dropdown Ordenar -->
-                    <div class="relative dropdown-trigger">
-                        <button class="px-4 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
-                            🔽 Ordenar
-                        </button>
-                        <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-200 shadow-xl dropdown-menu top-full dark:bg-dark-surface rounded-xl dark:border-gray-700">
-                            <div class="p-2">
-                                <a href="{{ route('feed') }}" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Más recientes
-                                </a>
-                                <a href="{{ route('feed') }}?sort=most_commented" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    💬 Más comentados
-                                </a>
-                                <a href="{{ route('feed') }}?sort=most_reactions" class="block px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    ❤️ Más reaccionados
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Nombre de usuario y rol -->
-                    <div class="relative ml-2 dropdown-trigger">
-                        <button class="flex items-center gap-2 px-3 py-2 text-white transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
+                        <button class="flex items-center gap-2 px-4 py-2 text-white font-medium transition-all duration-300 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm">
                             <div class="flex items-center justify-center w-6 h-6 text-xs font-bold text-white rounded-full bg-gradient-to-br from-primary to-secondary">
                                 {{ substr(Auth::user()->name, 0, 1) }}
                             </div>
-                            <span class="text-sm">{{ Auth::user()->name }}</span>
-                            <span class="text-xs text-white/60">
-                                @if(Auth::user()->role_id == 3) 👑 Admin
-                                @elseif(Auth::user()->role_id == 2) ⭐ Master
-                                @else 🎓 Universitario
-                                @endif
-                            </span>
+                            <span class="hidden sm:inline text-sm">{{ Auth::user()->name }}</span>
                         </button>
                         <div class="absolute right-0 z-50 w-48 mt-2 bg-white border border-gray-200 shadow-xl dropdown-menu top-full dark:bg-dark-surface rounded-xl dark:border-gray-700">
                             <div class="p-2">
-                                <a href="{{ route('profile.show', Auth::id()) }}" class="flex items-center gap-2 px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <a href="{{ route('profile.show', Auth::id()) }}" class="flex items-center gap-2 px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-text-primary dark:text-dark-text-primary">
                                     👤 Mi Perfil
                                 </a>
-                                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-text-primary dark:text-dark-text-primary">
                                     ✏️ Editar Perfil
                                 </a>
                                 @if(Auth::user()->role_id == 3)
-                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                                        📊 Dashboard Admin
+                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2 text-sm transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-text-primary dark:text-dark-text-primary">
+                                        📊 Admin Dashboard
                                     </a>
                                 @endif
+                                <div class="h-px my-1 bg-gray-100 dark:bg-gray-700"></div>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="flex items-center w-full gap-2 px-3 py-2 text-sm text-left text-red-600 transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -271,178 +201,272 @@
                         </div>
                     </div>
                     
-                    <!-- Botón modo oscuro (CORREGIDO) -->
-                    <button @click="$store.darkMode.toggle()" class="p-2 ml-1 transition-all duration-300 rounded-lg nav-btn bg-white/20 backdrop-blur-sm">
-                        <span x-show="!$store.darkMode.value" class="text-yellow-400">🌞</span>
-                        <span x-show="$store.darkMode.value" class="text-gray-300">🌙</span>
+                    <div class="w-px h-6 mx-1 bg-white/20"></div>
+                    
+                    <button @click="darkMode = !darkMode" class="p-2.5 text-white bg-white/10 hover:bg-white/20 rounded-xl transition-all">
+                        <span x-show="!darkMode" class="text-yellow-400 text-xl">🌞</span>
+                        <span x-show="darkMode" class="text-gray-300 text-xl">🌙</span>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
-    
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="max-w-4xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
+
+    <!-- HERO SECTION MODIFICADO -->
+    <div class="relative z-10 flex flex-col items-center justify-center h-[50vh] min-h-[400px] px-4 text-center text-white">
+        <h1 class="mb-4 text-4xl font-bold md:text-6xl lg:text-7xl leading-tight animate-fade-in">
+            Tu Comunidad <span class="text-secondary">UPEA</span>
+        </h1>
+        <p class="max-w-2xl mx-auto mb-10 text-lg md:text-2xl text-white/80 font-light animate-fade-in">
+            Bienvenido, <span class="font-bold text-white">{{ Auth::user()->name }}</span>. Mantente al día con lo que sucede en tu carrera.
+        </p>
         
-        <!-- Filtros -->
-        <div class="mb-6 overflow-hidden transition-all duration-300 shadow-md bg-surface dark:bg-dark-surface rounded-xl">
-            <div class="p-5">
-                <h3 class="mb-3 font-bold text-text-primary dark:text-dark-text-primary">🔍 Filtrar publicaciones</h3>
-                <form method="GET" class="grid grid-cols-1 gap-3 md:grid-cols-4">
-                    <select name="career_id" class="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-background dark:bg-dark-background dark:border-gray-700 text-text-primary dark:text-dark-text-primary focus:ring-2 focus:ring-secondary">
-                        <option value="">Todas las carreras</option>
-                        @foreach($careers as $career)
-                            <option value="{{ $career->id }}" {{ request('career_id') == $career->id ? 'selected' : '' }}>
-                                {{ $career->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
-                    
-                    <select name="date_filter" class="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-background dark:bg-dark-background dark:border-gray-700 text-text-primary dark:text-dark-text-primary focus:ring-2 focus:ring-secondary">
-                        <option value="">Todas las fechas</option>
-                        <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>Hoy</option>
-                        <option value="week" {{ request('date_filter') == 'week' ? 'selected' : '' }}>Última semana</option>
-                        <option value="month" {{ request('date_filter') == 'month' ? 'selected' : '' }}>Último mes</option>
-                    </select>
-                    
-                    <select name="sort" class="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-background dark:bg-dark-background dark:border-gray-700 text-text-primary dark:text-dark-text-primary focus:ring-2 focus:ring-secondary">
-                        <option value="">Más recientes</option>
-                        <option value="most_commented" {{ request('sort') == 'most_commented' ? 'selected' : '' }}>💬 Más comentados</option>
-                        <option value="most_reactions" {{ request('sort') == 'most_reactions' ? 'selected' : '' }}>❤️ Más reaccionados</option>
-                    </select>
-                    
-                    <button type="submit" class="px-4 py-2 text-sm font-semibold text-white transition-all duration-300 rounded-lg bg-secondary hover:bg-primary">
-                        🔍 Aplicar
-                    </button>
-                </form>
-                
-                @if(request()->anyFilled(['career_id', 'date_filter', 'sort']))
-                    <div class="mt-3">
-                        <a href="{{ route('feed') }}" class="text-sm transition text-text-secondary hover:text-secondary">
-                            ✖️ Limpiar filtros
-                        </a>
-                    </div>
-                @endif
+        <div class="w-full max-w-3xl p-2 mx-auto mb-8 bg-white/10 backdrop-blur-md rounded-2xl animate-fade-in">
+            <form action="{{ route('feed') }}" method="GET" class="flex flex-col gap-2 md:flex-row">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar publicaciones..." 
+                       class="flex-1 px-4 py-3 text-slate-800 bg-white/20 placeholder-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary">
+                <button type="submit" class="px-6 py-3 font-semibold text-white transition-all duration-300 bg-secondary hover:bg-primary rounded-xl hover:scale-105">
+                    🔍 Buscar
+                </button>
+            </form>
+        </div>
+    </div>          </div>
             </div>
-        </div>
+     <!-- CONTENIDO PRINCIPAL -->
+    <main class="content-container max-w-5xl mx-auto -mt-20 bg-background dark:bg-dark-background rounded-t-[3rem] shadow-2xl">
         
-        <!-- Botón nueva publicación -->
-        <div class="mb-6">
-            <a href="{{ route('posts.create') }}" class="inline-flex items-center gap-2 px-5 py-2 font-semibold text-white transition-all duration-300 rounded-lg bg-secondary hover:bg-primary hover:scale-105">
-                ✨ + Nueva publicación
-            </a>
-        </div>
-        
-        <!-- Publicaciones -->
-        @forelse($posts as $post)
-            <div class="mb-6 overflow-hidden transition-all duration-300 shadow-md post-card bg-surface dark:bg-dark-surface rounded-xl hover:shadow-xl">
-                <div class="p-6">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center gap-3">
-                            <div class="flex items-center justify-center w-10 h-10 font-bold text-white rounded-full bg-gradient-to-br from-primary to-secondary">
-                                {{ substr($post->user->name, 0, 1) }}
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-text-primary dark:text-dark-text-primary">{{ $post->user->name }} {{ $post->user->lastname }}</h3>
-                                <div class="flex items-center gap-2 text-xs text-text-secondary dark:text-dark-text-secondary">
-                                    <span>{{ $post->created_at->diffForHumans() }}</span>
-                                    @if($post->user->career)
-                                        <span>•</span>
-                                        <span>{{ $post->user->career->nombre }}</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                        @if(auth()->id() === $post->user_id)
-                            <a href="{{ route('posts.edit', $post) }}" class="transition text-text-secondary hover:text-primary">✏️ Editar</a>
-                        @endif
-                    </div>
-                    
-                    <a href="{{ route('posts.show', $post) }}">
-                        <h2 class="mb-2 text-xl font-bold transition text-text-primary dark:text-dark-text-primary hover:text-primary">{{ $post->title }}</h2>
-                    </a>
-                    <p class="mb-3 text-text-secondary dark:text-dark-text-secondary">{{ Str::limit($post->content, 200) }}</p>
-                    
-                    @if($post->images)
-                        @php $images = json_decode($post->images, true); @endphp
-                        @if(is_array($images) && count($images) > 0)
-                            <div class="grid grid-cols-2 gap-2 mb-4">
-                                @foreach(array_slice($images, 0, 2) as $image)
-                                    <img src="{{ $image }}" alt="Imagen" class="object-cover w-full rounded-lg h-36">
+        <!-- Filtros y Nueva Publicación -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <!-- Sidebar Filtros -->
+            <div class="md:col-span-1 space-y-6">
+                <div class="p-6 bg-surface dark:bg-dark-surface rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                    <h3 class="mb-4 font-bold text-text-primary dark:text-dark-text-primary flex items-center gap-2">
+                        <span>🔍</span> Filtrar
+                    </h3>
+                    <form method="GET" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Carrera</label>
+                            <select name="career_id" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl bg-background dark:bg-dark-background dark:border-gray-700 text-text-primary dark:text-dark-text-primary focus:ring-2 focus:ring-secondary outline-none">
+                                <option value="">Todas</option>
+                                @foreach($careers as $career)
+                                    <option value="{{ $career->id }}" {{ request('career_id') == $career->id ? 'selected' : '' }}>
+                                        {{ $career->nombre }}
+                                    </option>
                                 @endforeach
-                            </div>
-                            @if(count($images) > 2)
-                                <p class="mt-1 text-xs text-text-secondary">+{{ count($images) - 2 }} imágenes más</p>
-                            @endif
-                        @endif
-                    @endif
-                    
-                    <!-- Reacciones -->
-                    <div class="flex flex-wrap gap-2 pt-3 mb-4 border-t">
-                        @php
-                            $reactionTypes = [
-                                'ya' => ['emoji' => '😊', 'label' => 'Ya', 'color' => 'bg-green-500'],
-                                'ahh' => ['emoji' => '😮', 'label' => 'Ahh', 'color' => 'bg-yellow-500'],
-                                'ehh' => ['emoji' => '🤔', 'label' => 'Ehh', 'color' => 'bg-purple-500'],
-                                'ohh' => ['emoji' => '😲', 'label' => 'Ohh', 'color' => 'bg-red-500'],
-                                'uhh' => ['emoji' => '😅', 'label' => 'Uhh', 'color' => 'bg-blue-500']
-                            ];
-                            $currentReaction = $userReactions[$post->id]->type ?? null;
-                        @endphp
-                        @foreach($reactionTypes as $key => $reaction)
-                            <button class="reaction-btn px-3 py-1 rounded-full text-sm font-medium transition-all duration-200
-                                {{ $currentReaction === $key ? $reaction['color'] . ' text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
-                                data-post-id="{{ $post->id }}" data-type="{{ $key }}">
-                                {{ $reaction['emoji'] }} {{ $reaction['label'] }}
-                                <span class="count-{{ $key }} ml-1">({{ $post->reactions->where('type', $key)->count() }})</span>
-                            </button>
-                        @endforeach
-                    </div>
-                    
-                    <!-- Comentarios -->
-                    <div class="pt-3 border-t">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="font-semibold text-text-primary dark:text-dark-text-primary">💬 Comentarios ({{ $post->comments->count() }})</h4>
-                            <a href="{{ route('posts.show', $post) }}" class="text-xs transition text-secondary hover:text-primary">Ver todos</a>
+                            </select>
                         </div>
                         
-                        @foreach($post->comments->take(2) as $comment)
-                            <div class="p-2 mb-2 text-sm rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                                <strong class="text-text-primary dark:text-dark-text-primary">{{ $comment->user->name }}</strong>
-                                <p class="text-text-secondary dark:text-dark-text-secondary">{{ Str::limit($comment->content, 80) }}</p>
-                            </div>
-                        @endforeach
-
-                        <form action="{{ route('comments.store', $post) }}" method="POST" class="mt-2">
-                            @csrf
-                            <div class="flex gap-2">
-                                <input type="text" name="content" placeholder="Escribe un comentario..." 
-                                       class="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-background dark:bg-dark-background dark:border-gray-700 text-text-primary dark:text-dark-text-primary focus:ring-2 focus:ring-secondary focus:border-transparent">
-                                <button type="submit" class="px-4 py-2 text-sm text-white transition-all duration-300 rounded-lg bg-secondary hover:bg-primary">
-                                    ➤
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Fecha</label>
+                            <select name="date_filter" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl bg-background dark:bg-dark-background dark:border-gray-700 text-text-primary dark:text-dark-text-primary focus:ring-2 focus:ring-secondary outline-none">
+                                <option value="">Todas</option>
+                                <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>Hoy</option>
+                                <option value="week" {{ request('date_filter') == 'week' ? 'selected' : '' }}>Última semana</option>
+                                <option value="month" {{ request('date_filter') == 'month' ? 'selected' : '' }}>Último mes</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Orden</label>
+                            <select name="sort" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl bg-background dark:bg-dark-background dark:border-gray-700 text-text-primary dark:text-dark-text-primary focus:ring-2 focus:ring-secondary outline-none">
+                                <option value="">Más recientes</option>
+                                <option value="most_commented" {{ request('sort') == 'most_commented' ? 'selected' : '' }}>💬 Más comentados</option>
+                                <option value="most_reactions" {{ request('sort') == 'most_reactions' ? 'selected' : '' }}>❤️ Más reaccionados</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="w-full py-2.5 text-sm font-semibold text-white transition-all duration-300 rounded-xl bg-primary hover:bg-primary/90">
+                            Aplicar Filtros
+                        </button>
+                        
+                        @if(request()->anyFilled(['career_id', 'date_filter', 'sort', 'search']))
+                            <a href="{{ route('feed') }}" class="block text-center text-xs text-secondary hover:text-primary font-medium transition-colors">
+                                ✖ Limpiar todo
+                            </a>
+                        @endif
+                    </form>
                 </div>
-            </div>
-        @empty
-            <div class="py-12 text-center bg-surface dark:bg-dark-surface rounded-xl">
-                <p class="mb-4 text-text-secondary">No hay publicaciones aún. ¡Sé el primero en publicar!</p>
-                <a href="{{ route('posts.create') }}" class="inline-block px-6 py-2 text-white transition rounded-lg bg-secondary hover:bg-primary">
-                    + Crear publicación
+
+                <a href="{{ route('posts.create') }}" class="flex items-center justify-center gap-2 w-full p-4 font-bold text-white transition-all duration-300 rounded-2xl btn-secondary hover:scale-[1.02] active:scale-[0.98]">
+                    <span>✨</span> Nueva Publicación
                 </a>
             </div>
-        @endforelse
-        
-        <div class="mt-6">
-            {{ $posts->links() }}
+            
+            <!-- Feed de Publicaciones -->
+            <div class="md:col-span-3 space-y-6">
+                @forelse($posts as $post)
+                    <div class="shadow-md post-card bg-surface dark:bg-dark-surface rounded-2xl overflow-hidden">
+                        <div class="p-6">
+                            {{-- Autor --}}
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex items-center justify-center w-11 h-11 font-bold text-white text-sm rounded-full bg-gradient-to-br from-primary to-secondary flex-shrink-0 shadow-sm">
+                                        {{ strtoupper(substr($post->user->name, 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-text-primary dark:text-dark-text-primary leading-none">{{ $post->user->name }} {{ $post->user->lastname }}</p>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <p class="text-xs text-text-secondary dark:text-dark-text-secondary">{{ $post->created_at->diffForHumans() }}</p>
+                                            @if($post->user->career)
+                                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-300">
+                                                    {{ $post->user->career->nombre }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                @if(auth()->id() === $post->user_id)
+                                    <a href="{{ route('posts.edit', $post) }}" class="p-2 text-text-secondary hover:text-primary transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                    </a>
+                                @endif
+                            </div>
+
+                            {{-- Título y contenido --}}
+                            <a href="{{ route('posts.show', $post) }}" class="group">
+                                <h2 class="mb-2 text-xl font-bold text-text-primary dark:text-dark-text-primary group-hover:text-primary transition-colors">{{ $post->title }}</h2>
+                            </a>
+                            <p class="mb-4 text-text-secondary dark:text-dark-text-secondary leading-relaxed">{{ Str::limit($post->content, 200) }}</p>
+
+                            {{-- Imágenes mejoradas --}}
+                            @if($post->images)
+                                @php $imgs = json_decode($post->images, true); @endphp
+                                @if(is_array($imgs) && count($imgs) > 0)
+                                    @php $imgCount = count(array_slice($imgs, 0, 2)); @endphp
+                                    <div class="{{ $imgCount > 1 ? 'grid grid-cols-2 gap-3' : '' }} mb-4">
+                                        @foreach(array_slice($imgs, 0, 2) as $img)
+                                            <div class="rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-gray-900 shadow-sm">
+                                                <img src="{{ $img }}" alt="Imagen de la publicación"
+                                                     class="w-full h-auto max-h-[500px] object-contain hover:scale-105 transition-transform duration-500">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    @if(count($imgs) > 2)
+                                        <p class="text-xs text-secondary font-medium mb-4">+{{ count($imgs) - 2 }} imágenes adicionales</p>
+                                    @endif
+                                @endif
+                            @endif
+
+                            {{-- Reacciones --}}
+                            @php
+                                $reactionTypes = [
+                                    'ya'  => ['emoji' => '😊', 'label' => 'Ya',  'color' => 'bg-green-500'],
+                                    'ahh' => ['emoji' => '😮', 'label' => 'Ahh', 'color' => 'bg-yellow-500'],
+                                    'ehh' => ['emoji' => '🤔', 'label' => 'Ehh', 'color' => 'bg-purple-500'],
+                                    'ohh' => ['emoji' => '😲', 'label' => 'Ohh', 'color' => 'bg-red-500'],
+                                    'uhh' => ['emoji' => '😅', 'label' => 'Uhh', 'color' => 'bg-blue-500'],
+                                ];
+                                $currentReaction = $userReactions[$post->id]->type ?? null;
+                            @endphp
+                            <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                                @foreach($reactionTypes as $key => $reaction)
+                                    <button class="reaction-btn px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5
+                                        {{ $currentReaction === $key ? $reaction['color'].' text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700' }}"
+                                        data-post-id="{{ $post->id }}" data-type="{{ $key }}">
+                                        <span>{{ $reaction['emoji'] }}</span>
+                                        <span class="count-{{ $key }}" data-post-id="{{ $post->id }}">{{ $post->reactions->where('type', $key)->count() }}</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- SECCIÓN DE COMENTARIOS (Nativo) --}}
+                        <details class="border-t border-gray-100 dark:border-gray-800 group">
+                            <summary class="flex items-center gap-2 px-6 py-4 cursor-pointer select-none
+                                            text-sm font-bold text-text-secondary dark:text-dark-text-secondary
+                                            hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors list-none">
+                                <span class="text-lg">💬</span>
+                                <span>{{ $post->comments->count() }} comentario{{ $post->comments->count() !== 1 ? 's' : '' }}</span>
+                                <svg class="ml-auto w-4 h-4 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </summary>
+
+                            <div class="px-6 pb-6 pt-2">
+                                @if($post->comments->count() > 0)
+                                    <div class="space-y-4 mb-6 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                                        @foreach($post->comments as $comment)
+                                            <div class="flex gap-3">
+                                                <div class="flex-shrink-0 flex items-center justify-center w-9 h-9 text-xs font-bold text-white rounded-full bg-gradient-to-br from-primary to-secondary shadow-sm">
+                                                    {{ strtoupper(substr($comment->user->name, 0, 1)) }}
+                                                </div>
+                                                <div class="flex-1 bg-gray-50 dark:bg-gray-800/40 rounded-2xl rounded-tl-none px-4 py-3 border border-gray-100 dark:border-gray-700">
+                                                    <div class="flex items-center justify-between mb-1">
+                                                        <span class="text-sm font-bold text-text-primary dark:text-dark-text-primary">{{ $comment->user->name }}</span>
+                                                        <span class="text-[10px] text-text-secondary dark:text-dark-text-secondary">{{ $comment->created_at->diffForHumans() }}</span>
+                                                    </div>
+                                                    <p class="text-sm text-text-secondary dark:text-dark-text-secondary">{{ $comment->content }}</p>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-center text-sm text-text-secondary dark:text-dark-text-secondary mb-6 py-4 italic">
+                                        No hay comentarios aún. ¡Inicia la conversación!
+                                    </p>
+                                @endif
+
+                                {{-- Formulario para comentar --}}
+                                <form action="{{ route('comments.store', $post) }}" method="POST">
+                                    @csrf
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-shrink-0 flex items-center justify-center w-9 h-9 text-xs font-bold text-white rounded-full bg-primary/20 text-primary border border-primary/10">
+                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                        </div>
+                                        <div class="flex-1 flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-full px-5 py-2.5 focus-within:ring-2 focus-within:ring-secondary/50 transition-all">
+                                            <input type="text" name="content" required placeholder="Añade un comentario..."
+                                                   class="flex-1 bg-transparent text-sm text-text-primary dark:text-dark-text-primary outline-none placeholder-gray-400">
+                                            <button type="submit" class="text-secondary hover:text-primary transition-colors flex-shrink-0">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </details>
+                    </div>
+                @empty
+                    <div class="py-20 text-center bg-surface dark:bg-dark-surface rounded-2xl shadow-sm border border-dashed border-gray-300 dark:border-gray-700">
+                        <div class="text-5xl mb-4">📭</div>
+                        <h3 class="text-xl font-bold text-text-primary dark:text-dark-text-primary">No hay publicaciones</h3>
+                        <p class="text-text-secondary dark:text-dark-text-secondary mt-2">Sé el primero en compartir algo con la comunidad.</p>
+                        <a href="{{ route('posts.create') }}" class="mt-6 inline-block px-8 py-3 font-bold text-white rounded-xl btn-primary">
+                            Crear mi primera publicación
+                        </a>
+                    </div>
+                @endforelse
+
+                <div class="mt-10">
+                    {{ $posts->links() }}
+                </div>
+            </div>
         </div>
     </main>
-    
-    <footer class="py-6 mt-12 bg-primary dark:bg-dark-primary">
-        <div class="px-4 mx-auto text-center max-w-7xl">
-            <p class="text-sm text-white/70">© {{ date('Y') }} UniSocial - Conectando a la comunidad universitaria</p>
+
+    <!-- FOOTER PREMIUM -->
+    <footer class="relative z-10 py-16 bg-primary dark:bg-dark-primary border-t border-white/5">
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center justify-center w-12 h-12 bg-white/10 rounded-2xl">
+                        <span class="text-2xl">🦅</span>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-bold text-white block">UniSocial</span>
+                        <span class="text-sm text-white/40 font-medium">UPEA Comunidad Universitaria</span>
+                    </div>
+                </div>
+                
+                <div class="flex gap-8">
+                    <a href="#" class="text-white/60 hover:text-secondary transition-colors font-medium">Privacidad</a>
+                    <a href="#" class="text-white/60 hover:text-secondary transition-colors font-medium">Términos</a>
+                    <a href="#" class="text-white/60 hover:text-secondary transition-colors font-medium">Ayuda</a>
+                </div>
+                
+                <div class="text-right">
+                    <p class="text-sm text-white/40 font-light">
+                        © {{ date('Y') }} UniSocial. Hecho para estudiantes.
+                    </p>
+                </div>
+            </div>
         </div>
     </footer>
     
@@ -511,7 +535,7 @@
                     
                     for (const [reactionType, count] of Object.entries(data.counts)) {
                         const counter = document.querySelector(`.count-${reactionType}[data-post-id="${postId}"]`);
-                        if (counter) counter.textContent = `(${count})`;
+                        if (counter) counter.textContent = count;
                     }
                     
                     const container = this.parentElement;

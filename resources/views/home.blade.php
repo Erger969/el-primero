@@ -453,10 +453,12 @@
                         @if($post->images)
                             @php $imgs = json_decode($post->images, true); @endphp
                             @if(is_array($imgs) && count($imgs) > 0)
-                                <div class="grid grid-cols-2 gap-3 mb-4">
+                                @php $imgCount = count(array_slice($imgs, 0, 2)); @endphp
+                                <div class="{{ $imgCount > 1 ? 'grid grid-cols-2 gap-3' : '' }} mb-4">
                                     @foreach(array_slice($imgs, 0, 2) as $img)
-                                        <div class="overflow-hidden rounded-2xl h-60 border border-gray-100 dark:border-gray-800">
-                                            <img src="{{ $img }}" alt="Imagen" class="object-cover w-full h-full">
+                                        <div class="rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-gray-900">
+                                            <img src="{{ $img }}" alt="Imagen de la publicación"
+                                                 class="w-full h-auto max-h-[500px] object-contain">
                                         </div>
                                     @endforeach
                                 </div>
