@@ -11,7 +11,7 @@ class PublicController extends Controller
 {
     public function index()
     {
-        $posts = Post::with('user')
+        $posts = Post::with(['user', 'comments.user'])
             ->visible()
             ->orderBy('created_at', 'desc')
             ->paginate(6);
