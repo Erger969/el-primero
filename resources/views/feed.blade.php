@@ -25,21 +25,23 @@
         }
 
         .hero-video {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 60vh;
+            min-height: 480px;
             object-fit: cover;
             z-index: 0;
         }
         
         .hero-overlay {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 60vh;
+            min-height: 480px;
             background: linear-gradient(135deg, rgba(10, 22, 32, 0.9) 0%, rgba(26, 60, 94, 0.7) 100%);
             z-index: 1;
         }
@@ -121,7 +123,7 @@
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
     </style>
 </head>
-<body class="overflow-x-hidden transition-colors duration-300"
+<body class="bg-gray-50 dark:bg-slate-900 overflow-x-hidden transition-colors duration-300"
       x-data="{ 
           darkMode: localStorage.getItem('darkMode') === 'true',
           activePanel: 1,
@@ -233,7 +235,7 @@
     </div>          </div>
             </div>
      <!-- CONTENIDO PRINCIPAL -->
-    <main class="content-container max-w-5xl mx-auto -mt-20 bg-background dark:bg-dark-background rounded-t-[3rem] shadow-2xl">
+    <main class="content-container w-full px-4 md:px-8 mx-auto -mt-20 bg-background dark:bg-dark-background rounded-t-[3rem] shadow-2xl">
         
         <!-- Filtros y Nueva Publicación -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

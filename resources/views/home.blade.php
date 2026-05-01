@@ -22,21 +22,21 @@
         }
 
         .hero-video {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 850px;
             object-fit: cover;
             z-index: 0;
         }
         
         .hero-overlay {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 850px;
             background: linear-gradient(135deg, rgba(10, 22, 32, 0.9) 0%, rgba(26, 60, 94, 0.7) 100%);
             z-index: 1;
         }
@@ -107,7 +107,7 @@
 
     </style>
 </head>
-<body class="overflow-x-hidden transition-colors duration-300"
+<body class="bg-gray-50 dark:bg-slate-900 overflow-x-hidden transition-colors duration-300"
       x-data="{ 
           darkMode: localStorage.getItem('darkMode') === 'true',
           activePanel: 1,
@@ -346,7 +346,7 @@
     @endif
     
     <!-- CONTENEDOR PRINCIPAL CON Z-INDEX ELEVADO -->
-    <div class="relative z-20 bg-background dark:bg-dark-background content-container max-w-7xl mx-auto rounded-t-[3rem] -mt-20 shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.5)]">
+    <div class="relative z-20 bg-background dark:bg-dark-background content-container w-full px-4 md:px-8 mx-auto rounded-t-[3rem] -mt-20 shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.5)]">
         
         <!-- SECCIÓN: ¿QUÉ ES UNISOCIAL? -->
         <section class="mb-20">
