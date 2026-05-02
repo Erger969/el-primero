@@ -444,7 +444,7 @@
 
                         {{-- Imágenes --}}
                         @if($post->images)
-                            @php $imgs = json_decode($post->images, true); @endphp
+                            @php $imgs = $post->images; @endphp
                             @if(is_array($imgs) && count($imgs) > 0)
                                 @php $imgCount = count(array_slice($imgs, 0, 2)); @endphp
                                 <div class="{{ $imgCount > 1 ? 'grid grid-cols-2 gap-3' : '' }} mb-4">

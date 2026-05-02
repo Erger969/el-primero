@@ -111,7 +111,7 @@
                     
                     <!-- Images -->
                     @if($post->images)
-                        @php $images = json_decode($post->images, true); @endphp
+                        @php $images = $post->images; @endphp
                         @if(is_array($images) && count($images) > 0)
                             <div class="grid grid-cols-1 {{ count($images) > 1 ? 'sm:grid-cols-2' : '' }} gap-4 mb-6">
                                 @foreach($images as $image)

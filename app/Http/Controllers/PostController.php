@@ -128,15 +128,15 @@ class PostController extends Controller
         $imageUrls = [];
 
         if ($request->hasFile('images')) {
-            // Configuración manual de Cloudinary (directa, sin facade)
+            // Usar configuración desde config/cloudinary.php (que lee del .env)
             $cloudinary = new Cloudinary([
                 'cloud' => [
-                    'cloud_name' => 'dmbriummc',
-                    'api_key'    => '932545162843198',
-                    'api_secret' => 'RIGYbTS-2FHOblLsuWGhAkj7X78',
+                    'cloud_name' => config('cloudinary.cloud_name'),
+                    'api_key'    => config('cloudinary.api_key'),
+                    'api_secret' => config('cloudinary.api_secret'),
                 ],
                 'url' => [
-                    'secure' => true
+                    'secure' => config('cloudinary.secure')
                 ]
             ]);
 
@@ -157,7 +157,7 @@ class PostController extends Controller
             'user_id' => Auth::id(),
             'title' => $request->title,
             'content' => $request->content,
-            'images' => json_encode($imageUrls),
+            'images' => $imageUrls,
             'is_hidden' => false,
         ]);
 
