@@ -139,4 +139,40 @@
         visibility: visible;
         transform: translateY(0);
     }
+
+    /* Master Badge & Moderation Styles */
+    .badge-master {
+        @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm transition-all duration-300;
+        background: linear-gradient(135deg, #C4A35A 0%, #D4B06A 100%);
+        color: #1A3C5E;
+        box-shadow: 0 0 10px rgba(196, 163, 90, 0.3);
+    }
+
+    .badge-master:hover {
+        box-shadow: 0 0 15px rgba(196, 163, 90, 0.5);
+        transform: scale(1.05);
+    }
+
+    .badge-admin {
+        @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm;
+        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        color: white;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .moderation-card {
+        @apply border-2 border-dashed border-secondary/30 bg-secondary/5 rounded-2xl p-4 mb-4;
+    }
+
+    .hide-post-btn {
+        @apply flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-300;
+    }
+
+    .hide-post-btn-inactive {
+        @apply bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-red-900/30;
+    }
+
+    .hide-post-btn-active {
+        @apply bg-red-500 text-white shadow-lg shadow-red-500/30;
+    }
 }

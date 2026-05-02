@@ -21,8 +21,13 @@ class PostController extends Controller
     // Feed principal (para usuarios logueados)
     public function feed(Request $request)
     {
-        $query = Post::with(['user', 'comments.user', 'reactions'])
-            ->visible();
+        $user = Auth::user();
+        $query = Post::with(['user', 'comments.user', 'reactions']);
+        
+        // Solo usuarios normales ven solo lo visible. Masters (2) y Admins (3) ven todo.
+        if ($user->role_id < 2) {
+            $query->visible();
+        }
         
         // Filtro por carrera
         if ($request->filled('career_id')) {
@@ -68,10 +73,15 @@ class PostController extends Controller
         $searchCounts = ['title' => 0, 'content' => 0, 'user' => 0];
 
         if ($search) {
-            // Calcular conteos para cada categoría (respetando la visibilidad)
-            $searchCounts['title'] = Post::visible()->where('title', 'like', "%{$search}%")->count();
-            $searchCounts['content'] = Post::visible()->where('content', 'like', "%{$search}%")->count();
-            $searchCounts['user'] = Post::visible()->whereHas('user', function($q) use ($search) {
+            $visibilityQuery = Post::query();
+            if ($user->role_id < 2) {
+                $visibilityQuery->visible();
+            }
+
+            // Calcular conteos para cada categoría
+            $searchCounts['title'] = (clone $visibilityQuery)->where('title', 'like', "%{$search}%")->count();
+            $searchCounts['content'] = (clone $visibilityQuery)->where('content', 'like', "%{$search}%")->count();
+            $searchCounts['user'] = (clone $visibilityQuery)->whereHas('user', function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")->orWhere('lastname', 'like', "%{$search}%");
             })->count();
 

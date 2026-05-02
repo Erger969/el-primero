@@ -111,9 +111,35 @@
                     </form>
                 </div>
 
-                <a href="{{ route('posts.create') }}" class="flex items-center justify-center gap-2 w-full p-4 font-bold text-white transition-all duration-300 rounded-2xl bg-gradient-to-r from-secondary to-primary shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
-                    <x-heroicon-o-sparkles class="w-5 h-5" /> Nueva Publicación
                 </a>
+
+                {{-- Contador de acciones para Masters --}}
+                @if(Auth::user()->role_id == 2)
+                    @php
+                        $hidesToday = \App\Models\MasterActivity::where('master_id', Auth::id())
+                            ->where('action', 'hide')
+                            ->whereDate('created_at', today())
+                            ->count();
+                        $remaining = max(0, 3 - $hidesToday);
+                    @endphp
+                    <div class="p-6 bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-2xl shadow-sm border border-secondary/30 backdrop-blur-sm">
+                        <h3 class="mb-2 font-bold text-secondary flex items-center gap-2">
+                            <span class="text-xl">👑</span> Estado Master
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-gray-500 uppercase">Acciones hoy</span>
+                                <span class="text-sm font-black {{ $remaining > 0 ? 'text-secondary' : 'text-red-500' }}">{{ $hidesToday }}/3</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                <div class="bg-secondary h-1.5 rounded-full transition-all duration-500" style="width: {{ ($hidesToday / 3) * 100 }}%"></div>
+                            </div>
+                            <p class="text-[10px] text-gray-500 italic leading-tight">
+                                Tienes <strong>{{ $remaining }}</strong> ocultamientos disponibles para hoy. Úsalos con sabiduría.
+                            </p>
+                        </div>
+                    </div>
+                @endif
             </div>
             
             <!-- Feed de Publicaciones -->
@@ -162,7 +188,13 @@
                 @endif
 
                 @forelse($posts as $post)
-                    <div class="shadow-md post-card bg-surface dark:bg-dark-surface rounded-2xl overflow-hidden">
+                    <div class="shadow-md post-card bg-surface dark:bg-dark-surface rounded-2xl overflow-hidden {{ $post->is_hidden ? 'opacity-75 border-2 border-red-500/20' : '' }}">
+                        @if($post->is_hidden)
+                            <div class="bg-red-500/10 px-6 py-2 border-b border-red-500/20 flex items-center gap-2">
+                                <x-heroicon-s-eye-slash class="w-4 h-4 text-red-500" />
+                                <span class="text-xs font-bold text-red-500 uppercase tracking-tight">Esta publicación está oculta para usuarios normales</span>
+                            </div>
+                        @endif
                         <div class="p-6">
                             {{-- Autor --}}
                             <div class="flex items-center justify-between mb-4">
@@ -171,7 +203,14 @@
                                         {{ strtoupper(substr($post->user->name, 0, 1)) }}
                                     </div>
                                     <div>
-                                        <p class="font-bold text-text-primary dark:text-dark-text-primary leading-none">{{ $post->user->name }} {{ $post->user->lastname }}</p>
+                                        <div class="flex items-center gap-2">
+                                            <p class="font-bold text-text-primary dark:text-dark-text-primary leading-none">{{ $post->user->name }} {{ $post->user->lastname }}</p>
+                                            @if($post->user->role_id == 2)
+                                                <span class="badge-master">Master</span>
+                                            @elseif($post->user->role_id == 3)
+                                                <span class="badge-admin">Admin</span>
+                                            @endif
+                                        </div>
                                         <div class="flex items-center gap-2 mt-1">
                                             <p class="text-xs text-text-secondary dark:text-dark-text-secondary">{{ $post->created_at->diffForHumans() }}</p>
                                             @if($post->user->career)
@@ -182,11 +221,29 @@
                                         </div>
                                     </div>
                                 </div>
-                                @if(auth()->id() === $post->user_id)
-                                    <a href="{{ route('posts.edit', $post) }}" class="p-2 text-text-secondary hover:text-primary transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                    </a>
-                                @endif
+                                <div class="flex items-center gap-2">
+                                    {{-- Botón de moderación para Master y Admin --}}
+                                    @if((auth()->user()->role_id == 2 && $post->user_id !== auth()->id()) || auth()->user()->role_id == 3)
+                                        <button onclick="toggleHidePost({{ $post->id }}, this)" 
+                                                data-hidden="{{ $post->is_hidden ? 'true' : 'false' }}"
+                                                class="hide-post-btn {{ $post->is_hidden ? 'hide-post-btn-active' : 'hide-post-btn-inactive' }}"
+                                                title="{{ $post->is_hidden ? 'Mostrar publicación' : 'Ocultar publicación' }}">
+                                            @if($post->is_hidden)
+                                                <x-heroicon-s-eye-slash class="w-4 h-4" />
+                                                <span>Oculto</span>
+                                            @else
+                                                <x-heroicon-o-eye-slash class="w-4 h-4" />
+                                                <span>Ocultar</span>
+                                            @endif
+                                        </button>
+                                    @endif
+
+                                    @if(auth()->id() === $post->user_id)
+                                        <a href="{{ route('posts.edit', $post) }}" class="p-2 text-text-secondary hover:text-primary transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
 
                             {{-- Título y contenido --}}
@@ -381,6 +438,73 @@
             document.getElementById('reportModal').classList.remove('flex');
         }
         
+        async function toggleHidePost(postId, btn) {
+            try {
+                const response = await fetch(`/master/posts/${postId}/hide`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const isHidden = data.status === 'hidden';
+                    btn.dataset.hidden = isHidden.toString();
+                    
+                    // Actualizar estilos del botón
+                    if (isHidden) {
+                        btn.classList.remove('hide-post-btn-inactive');
+                        btn.classList.add('hide-post-btn-active');
+                        btn.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd" /><path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" /></svg><span>Oculto</span>';
+                    } else {
+                        btn.classList.remove('hide-post-btn-active');
+                        btn.classList.add('hide-post-btn-inactive');
+                        btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg><span>Ocultar</span>';
+                    }
+                    
+                    // Actualizar la tarjeta (opacidad y borde)
+                    const card = btn.closest('.post-card');
+                    if (isHidden) {
+                        card.classList.add('opacity-75', 'border-2', 'border-red-500/20');
+                        // Añadir banner de oculto si no existe
+                        if (!card.querySelector('.bg-red-500/10')) {
+                            const banner = document.createElement('div');
+                            banner.className = 'bg-red-500/10 px-6 py-2 border-b border-red-500/20 flex items-center gap-2';
+                            banner.innerHTML = '<svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd" /><path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" /></svg><span class="text-xs font-bold text-red-500 uppercase tracking-tight">Esta publicación está oculta para usuarios normales</span>';
+                            card.prepend(banner);
+                        }
+                    } else {
+                        card.classList.remove('opacity-75', 'border-2', 'border-red-500/20');
+                        const banner = card.querySelector('.bg-red-500/10');
+                        if (banner) banner.remove();
+                    }
+                    
+                    // Actualizar contador en sidebar si existe
+                    const sidebarCounter = document.querySelector('.text-sm.font-black.text-secondary');
+                    if (sidebarCounter) {
+                        sidebarCounter.textContent = `${data.hides_today}/3`;
+                        if (data.remaining === 0) sidebarCounter.classList.replace('text-secondary', 'text-red-500');
+                        else sidebarCounter.classList.replace('text-red-500', 'text-secondary');
+                        
+                        const progressBar = document.querySelector('.bg-secondary.h-1.5.rounded-full');
+                        if (progressBar) progressBar.style.width = `${(data.hides_today / 3) * 100}%`;
+                        
+                        const remainingText = document.querySelector('.text-\\[10px\\].text-gray-500.italic strong');
+                        if (remainingText) remainingText.textContent = data.remaining;
+                    }
+                } else {
+                    alert(data.error || 'Ocurrió un error al procesar la solicitud.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ocurrió un error inesperado.');
+            }
+        }
+
         // Reacciones AJAX
         document.querySelectorAll('.reaction-btn').forEach(btn => {
             btn.addEventListener('click', async function() {

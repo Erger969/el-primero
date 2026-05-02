@@ -52,7 +52,14 @@
                                 {{ strtoupper(substr($post->user->name, 0, 1)) }}
                             </div>
                             <div>
-                                <h3 class="font-bold text-xl text-gray-900 dark:text-gray-100 leading-tight">{{ $post->user->name }} {{ $post->user->lastname }}</h3>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-bold text-xl text-gray-900 dark:text-gray-100 leading-tight">{{ $post->user->name }} {{ $post->user->lastname }}</h3>
+                                    @if($post->user->role_id == 2)
+                                        <span class="badge-master">Master</span>
+                                    @elseif($post->user->role_id == 3)
+                                        <span class="badge-admin">Admin</span>
+                                    @endif
+                                </div>
                                 <div class="flex items-center gap-3 mt-1">
                                     <span class="text-sm text-gray-500 dark:text-gray-400">{{ $post->created_at->diffForHumans() }}</span>
                                     @if($post->user->career)
@@ -64,20 +71,38 @@
                             </div>
                         </div>
                         
-                        @if(auth()->id() === $post->user_id)
-                            <div class="flex gap-2">
-                                <a href="{{ route('posts.edit', $post) }}" class="p-2.5 text-gray-400 hover:text-[#1A3C5E] dark:hover:text-[#C4A35A] transition-colors rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800" title="Editar">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                </a>
-                                <form action="{{ route('posts.destroy', $post) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta publicación?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-2.5 text-gray-400 hover:text-red-500 transition-colors rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800" title="Eliminar">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                    </button>
-                                </form>
-                            </div>
-                        @endif
+                        <div class="flex items-center gap-2">
+                            {{-- Botón de moderación para Master y Admin --}}
+                            @if((auth()->user()->role_id == 2 && $post->user_id !== auth()->id()) || auth()->user()->role_id == 3)
+                                <button onclick="toggleHidePost({{ $post->id }}, this)" 
+                                        data-hidden="{{ $post->is_hidden ? 'true' : 'false' }}"
+                                        class="hide-post-btn {{ $post->is_hidden ? 'hide-post-btn-active' : 'hide-post-btn-inactive' }}"
+                                        title="{{ $post->is_hidden ? 'Mostrar publicación' : 'Ocultar publicación' }}">
+                                    @if($post->is_hidden)
+                                        <x-heroicon-s-eye-slash class="w-5 h-5" />
+                                        <span>Oculto</span>
+                                    @else
+                                        <x-heroicon-o-eye-slash class="w-5 h-5" />
+                                        <span>Ocultar</span>
+                                    @endif
+                                </button>
+                            @endif
+
+                            @if(auth()->id() === $post->user_id)
+                                <div class="flex gap-2">
+                                    <a href="{{ route('posts.edit', $post) }}" class="p-2.5 text-gray-400 hover:text-[#1A3C5E] dark:hover:text-[#C4A35A] transition-colors rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800" title="Editar">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                    </a>
+                                    <form action="{{ route('posts.destroy', $post) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta publicación?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-2.5 text-gray-400 hover:text-red-500 transition-colors rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800" title="Eliminar">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Content -->
@@ -263,6 +288,42 @@
                 }
             });
         });
+
+        async function toggleHidePost(postId, btn) {
+            try {
+                const response = await fetch(`/master/posts/${postId}/hide`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const isHidden = data.status === 'hidden';
+                    btn.dataset.hidden = isHidden.toString();
+                    
+                    if (isHidden) {
+                        btn.classList.remove('hide-post-btn-inactive');
+                        btn.classList.add('hide-post-btn-active');
+                        btn.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd" /><path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" /></svg><span>Oculto</span>';
+                    } else {
+                        btn.classList.remove('hide-post-btn-active');
+                        btn.classList.add('hide-post-btn-inactive');
+                        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg><span>Ocultar</span>';
+                    }
+                    
+                    window.location.reload(); // En la vista de detalle recargamos para ver los cambios de estado generales
+                } else {
+                    alert(data.error || 'Error al procesar.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
     </script>
 </body>
 </html>
