@@ -14,7 +14,7 @@
 <body class="bg-gray-50 dark:bg-slate-900 overflow-x-hidden transition-colors duration-300"
       x-data="{ 
           darkMode: localStorage.getItem('darkMode') === 'true',
-          activePanel: 1,
+          activePanel: {{ request('panel') == 'login' || $errors->has('email') || session('status') ? 2 : (request('panel') == 'register' || $errors->has('name') || $errors->has('lastname') || $errors->has('career_id') ? 3 : 1) }},
           openComments: {},
           next() { if (this.activePanel < 3) this.activePanel++; },
           prev() { if (this.activePanel > 1) this.activePanel--; }
@@ -127,12 +127,14 @@
                                 <label class="block mb-2 font-semibold text-text-primary dark:text-dark-text-primary">Email</label>
                                 <input type="email" name="email" value="{{ old('email') }}" required
                                        class="w-full px-4 py-3 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                @error('email')<p class="mt-1 text-sm text-red-500">{{ $message }}</p>@enderror
                             </div>
                             
                             <div class="mb-4">
                                 <label class="block mb-2 font-semibold text-text-primary dark:text-dark-text-primary">Contraseña</label>
                                 <input type="password" name="password" required
                                        class="w-full px-4 py-3 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                @error('password')<p class="mt-1 text-sm text-red-500">{{ $message }}</p>@enderror
                             </div>
                             
                             <div class="flex items-center justify-between mb-6">
@@ -174,11 +176,13 @@
                                     <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Nombre</label>
                                     <input type="text" name="name" value="{{ old('name') }}" required
                                            class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                    @error('name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Apellidos</label>
                                     <input type="text" name="lastname" value="{{ old('lastname') }}" required
                                            class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                    @error('lastname')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                                 </div>
                             </div>
                             
@@ -186,6 +190,7 @@
                                 <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Email</label>
                                 <input type="email" name="email" value="{{ old('email') }}" required
                                        class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                @error('email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                             </div>
                             
                             <div class="mb-3">
@@ -196,6 +201,7 @@
                                         <option value="{{ $career->id }}">{{ $career->nombre }}</option>
                                     @endforeach
                                 </select>
+                                @error('career_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                             </div>
                             
                             <div class="grid grid-cols-2 gap-3">
@@ -203,6 +209,7 @@
                                     <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Contraseña</label>
                                     <input type="password" name="password" required
                                            class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                    @error('password')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Confirmar</label>
