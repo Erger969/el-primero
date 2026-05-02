@@ -9,7 +9,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <script>
+        if (localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
 <body class="bg-gray-50 dark:bg-slate-900 overflow-x-hidden transition-colors duration-300"
       x-data="{ 
@@ -19,8 +25,7 @@
           next() { if (this.activePanel < 3) this.activePanel++; },
           prev() { if (this.activePanel > 1) this.activePanel--; }
       }" 
-      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" 
-      :class="{ 'light': !darkMode, 'dark': darkMode }">
+      x-init="$watch('darkMode', val => { localStorage.setItem('darkMode', val); if(val) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark'); })">
     
     <!-- Video de fondo fijo -->
     <video autoplay loop muted playsinline class="hero-video" style="object-fit: cover; object-position: center 30%;">
@@ -597,11 +602,7 @@
     </footer>
     
     <script>
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        // La preferencia inicial ahora se carga en el <head> para evitar parpadeos
         
         // La lógica de brillo ahora se maneja automáticamente mediante las clases reactivas de Alpine.js
         // eliminando la necesidad de buscar elementos en el DOM manualmente.

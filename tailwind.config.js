@@ -12,10 +12,10 @@ export default {
                 // ===== TEMA CLARO =====
                 'primary': '#1A3C5E',      // Azul profundo
                 'secondary': '#C4A35A',    // Dorado quemado
-                'background': '#F8F6F0',   // Blanco hueso
-                'surface': '#EDEBE5',      // Gris muy claro
-                'text-primary': '#2C2C2C', // Gris oscuro
-                'text-secondary': '#6B6B6B', // Gris medio
+                'background': '#F1F5F9',   // Slate 100 (Gris muy claro y frío)
+                'surface': '#FFFFFF',      // Blanco puro
+                'text-primary': '#0F172A', // Slate 900
+                'text-secondary': '#64748B', // Slate 500
                 
                 // ===== TEMA OSCURO (se usarán con dark:) =====
                 'dark-primary': '#2A6B9E',     // Azul eléctrico
