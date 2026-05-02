@@ -34,7 +34,7 @@
             <div class="flex items-center justify-between h-20">
                 <a href="{{ route('home') }}" class="flex items-center gap-3 transition-transform hover:scale-105 group">
                     <div class="flex items-center justify-center w-11 h-11 bg-gradient-to-br from-primary to-secondary rounded-2xl shadow-lg group-hover:rotate-12 transition-all duration-300">
-                        <span class="text-xl text-white">🦅</span>
+                        <x-heroicon-s-academic-cap class="w-6 h-6 text-white" />
                     </div>
                     <span class="text-2xl font-bold tracking-tight text-white">UniSocial</span>
                 </a>
@@ -95,18 +95,18 @@
                             <form action="{{ route('feed') }}" method="GET" class="flex flex-col gap-2 md:flex-row">
                                 <input type="text" name="search" placeholder="Buscar publicaciones..." 
                                        class="flex-1 px-4 py-3 text-slate-800 bg-white/20 placeholder-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary">
-                                <button type="submit" class="px-6 py-3 font-semibold text-white transition-all duration-300 bg-secondary hover:bg-primary rounded-xl hover:scale-105">
-                                    🔍 Buscar
+                                <button type="submit" class="flex items-center justify-center gap-2 px-6 py-3 font-semibold text-white transition-all duration-300 bg-secondary hover:bg-primary rounded-xl hover:scale-105">
+                                    <x-heroicon-o-magnifying-glass class="w-5 h-5" /> Buscar
                                 </button>
                             </form>
                         </div>
                         
                         <div class="flex flex-wrap justify-center gap-3">
-                            <a href="{{ route('feed') }}?type=evento" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">📅 Eventos</a>
-                            <a href="{{ route('feed') }}?type=noticia" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">📰 Noticias</a>
-                            <a href="{{ route('feed') }}?type=curso" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">📚 Cursos</a>
-                            <a href="{{ route('feed') }}?type=aviso" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">⚠️ Avisos</a>
-                            <a href="{{ route('feed') }}?sort=most_commented" class="px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary">🔥 Tendencias</a>
+                            <a href="{{ route('feed') }}?type=evento" class="flex items-center gap-2 px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary"><x-heroicon-o-calendar class="w-4 h-4" /> Eventos</a>
+                            <a href="{{ route('feed') }}?type=noticia" class="flex items-center gap-2 px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary"><x-heroicon-o-newspaper class="w-4 h-4" /> Noticias</a>
+                            <a href="{{ route('feed') }}?type=curso" class="flex items-center gap-2 px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary"><x-heroicon-o-book-open class="w-4 h-4" /> Cursos</a>
+                            <a href="{{ route('feed') }}?type=aviso" class="flex items-center gap-2 px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary"><x-heroicon-o-exclamation-triangle class="w-4 h-4" /> Avisos</a>
+                            <a href="{{ route('feed') }}?sort=most_commented" class="flex items-center gap-2 px-4 py-2 transition rounded-full bg-white/10 backdrop-blur-sm hover:bg-secondary"><x-heroicon-o-fire class="w-4 h-4 text-orange-400" /> Tendencias</a>
                         </div>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                     <div class="max-w-md p-8 mx-auto bg-white shadow-2xl dark:bg-dark-surface rounded-2xl animate-slide-right">
                         <div class="mb-6 text-center">
                             <div class="flex items-center justify-center w-16 h-16 mx-auto shadow-lg bg-gradient-to-br from-primary to-secondary rounded-2xl">
-                                <span class="text-3xl">🔐</span>
+                                <x-heroicon-o-lock-closed class="w-8 h-8 text-white" />
                             </div>
                             <h2 class="mt-3 text-2xl font-bold text-text-primary dark:text-dark-text-primary">Iniciar sesión</h2>
                         </div>
@@ -170,7 +170,7 @@
                     <div class="max-w-md p-8 mx-auto bg-white shadow-2xl dark:bg-dark-surface rounded-2xl animate-slide-right">
                         <div class="mb-6 text-center">
                             <div class="flex items-center justify-center w-16 h-16 mx-auto shadow-lg bg-gradient-to-br from-primary to-secondary rounded-2xl">
-                                <span class="text-3xl">✨</span>
+                                <x-heroicon-o-sparkles class="w-8 h-8 text-white" />
                             </div>
                             <h2 class="mt-3 text-2xl font-bold text-text-primary dark:text-dark-text-primary">Crear cuenta</h2>
                         </div>
@@ -282,21 +282,27 @@
         <section class="mb-20">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div class="p-8 rounded-3xl bg-surface/50 dark:bg-dark-surface/30 backdrop-blur-sm border border-white/10 hover:border-secondary/50 transition-all duration-300">
-                    <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-primary/10 rounded-2xl text-3xl">🤝</div>
+                    <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-primary/10 rounded-2xl text-primary">
+                        <x-heroicon-o-users class="w-8 h-8" />
+                    </div>
                     <h3 class="text-xl font-bold mb-3 text-text-primary dark:text-dark-text-primary">Conecta</h3>
                     <p class="text-text-secondary dark:text-dark-text-secondary text-sm leading-relaxed">
                         Encuentra a compañeros de tu carrera y de toda la universidad. Construye tu red profesional desde hoy.
                     </p>
                 </div>
                 <div class="p-8 rounded-3xl bg-surface/50 dark:bg-dark-surface/30 backdrop-blur-sm border border-white/10 hover:border-secondary/50 transition-all duration-300">
-                    <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-secondary/10 rounded-2xl text-3xl">📢</div>
+                    <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-secondary/10 rounded-2xl text-secondary">
+                        <x-heroicon-o-megaphone class="w-8 h-8" />
+                    </div>
                     <h3 class="text-xl font-bold mb-3 text-text-primary dark:text-dark-text-primary">Comparte</h3>
                     <p class="text-text-secondary dark:text-dark-text-secondary text-sm leading-relaxed">
                         Publica noticias, eventos, apuntes o avisos importantes. Mantén informada a tu comunidad estudiantil.
                     </p>
                 </div>
                 <div class="p-8 rounded-3xl bg-surface/50 dark:bg-dark-surface/30 backdrop-blur-sm border border-white/10 hover:border-secondary/50 transition-all duration-300">
-                    <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-green-500/10 rounded-2xl text-3xl">🚀</div>
+                    <div class="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-green-500/10 rounded-2xl text-green-500">
+                        <x-heroicon-o-rocket-launch class="w-8 h-8" />
+                    </div>
                     <h3 class="text-xl font-bold mb-3 text-text-primary dark:text-dark-text-primary">Crece</h3>
                     <p class="text-text-secondary dark:text-dark-text-secondary text-sm leading-relaxed">
                         Participa en debates, asiste a cursos y mantente al día con las tendencias de tu facultad.
@@ -325,7 +331,7 @@
                 <div class="flex flex-wrap gap-3 mb-8">
                     <a href="{{ route('home', ['search' => $search, 'search_type' => 'title']) }}" 
                        class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all duration-300 {{ $searchType === 'title' ? 'bg-secondary text-white shadow-lg scale-105' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
-                        <span>📌 Títulos</span>
+                        <span><x-heroicon-o-tag class="w-5 h-5 inline-block mr-1 -mt-0.5" /> Títulos</span>
                         <span class="px-2 py-0.5 rounded-lg text-xs {{ $searchType === 'title' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
                             {{ $searchCounts['title'] }}
                         </span>
@@ -333,7 +339,7 @@
                     
                     <a href="{{ route('home', ['search' => $search, 'search_type' => 'content']) }}" 
                        class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all duration-300 {{ $searchType === 'content' ? 'bg-secondary text-white shadow-lg scale-105' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
-                        <span>📝 Descripciones</span>
+                        <span><x-heroicon-o-document-text class="w-5 h-5 inline-block mr-1 -mt-0.5" /> Descripciones</span>
                         <span class="px-2 py-0.5 rounded-lg text-xs {{ $searchType === 'content' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
                             {{ $searchCounts['content'] }}
                         </span>
@@ -341,7 +347,7 @@
                     
                     <a href="{{ route('home', ['search' => $search, 'search_type' => 'user']) }}" 
                        class="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all duration-300 {{ $searchType === 'user' ? 'bg-secondary text-white shadow-lg scale-105' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
-                        <span>👥 Usuarios</span>
+                        <span><x-heroicon-o-user-group class="w-5 h-5 inline-block mr-1 -mt-0.5" /> Usuarios</span>
                         <span class="px-2 py-0.5 rounded-lg text-xs {{ $searchType === 'user' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
                             {{ $searchCounts['user'] }}
                         </span>
@@ -355,7 +361,7 @@
         <section class="mb-12">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
-                    🔥 <span class="text-secondary">Tendencias</span> de la semana
+                    <x-heroicon-o-fire class="w-8 h-8 text-orange-500 inline-block mr-2" /> <span class="text-secondary">Tendencias</span> de la semana
                 </h2>
                 <span class="text-sm text-text-secondary dark:text-dark-text-secondary">Lo más comentado y reaccionado</span>
             </div>
@@ -369,7 +375,7 @@
                                 <img src="{{ $images[0] }}" alt="{{ $post->title }}" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110">
                             @else
                                 <div class="flex items-center justify-center w-full h-full bg-gradient-to-br from-primary/30 to-secondary/30 group-hover:scale-110 transition-transform duration-700">
-                                    <span class="text-5xl">🦅</span>
+                                    <x-heroicon-s-academic-cap class="w-12 h-12 text-white" />
                                 </div>
                             @endif
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
@@ -386,8 +392,8 @@
                                     <span>{{ $post->user->name }}</span>
                                 </div>
                                 <div class="flex gap-3 bg-gray-50 dark:bg-gray-800/50 px-2 py-1 rounded-lg">
-                                    <span class="flex items-center gap-1">💬 {{ $post->comments_count }}</span>
-                                    <span class="flex items-center gap-1">❤️ {{ $post->reactions_count }}</span>
+                                    <span class="flex items-center gap-1"><x-heroicon-o-chat-bubble-left class="w-4 h-4" /> {{ $post->comments_count }}</span>
+                                    <span class="flex items-center gap-1"><x-heroicon-o-heart class="w-4 h-4" /> {{ $post->reactions_count }}</span>
                                 </div>
                             </div>
                         </div>
@@ -405,9 +411,9 @@
         <section>
             <h2 class="mb-6 text-2xl font-bold text-text-primary dark:text-dark-text-primary">
                 @if($search)
-                    📰 Resultados en <span class="text-secondary">{{ $searchType === 'title' ? 'Títulos' : ($searchType === 'content' ? 'Descripciones' : 'Usuarios') }}</span>
+                    <x-heroicon-o-newspaper class="w-8 h-8 inline-block mr-2" /> Resultados en <span class="text-secondary">{{ $searchType === 'title' ? 'Títulos' : ($searchType === 'content' ? 'Descripciones' : 'Usuarios') }}</span>
                 @else
-                    📰 Últimas publicaciones
+                    <x-heroicon-o-newspaper class="w-8 h-8 inline-block mr-2" /> Últimas publicaciones
                 @endif
             </h2>
             
@@ -476,7 +482,7 @@
                                         text-sm font-medium text-text-secondary dark:text-dark-text-secondary
                                         hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors rounded-b-xl
                                         list-none">
-                            <span class="text-base">💬</span>
+                            <x-heroicon-o-chat-bubble-left-ellipsis class="w-5 h-5" />
                             <span>{{ $post->comments->count() }} comentario{{ $post->comments->count() !== 1 ? 's' : '' }}</span>
                             {{-- Flecha giratoria pura CSS --}}
                             <svg class="ml-auto w-4 h-4 transition-transform duration-200 group-open:rotate-180"
@@ -545,7 +551,7 @@
                                 <div class="text-center py-2">
                                     <button onclick="window.scrollTo({top:0,behavior:'smooth'})"
                                             class="text-sm text-secondary hover:text-primary font-semibold transition-colors">
-                                        🔐 Inicia sesión para comentar
+                                        <x-heroicon-o-lock-closed class="w-4 h-4 inline-block mr-1 -mt-0.5" /> Inicia sesión para comentar
                                     </button>
                                 </div>
                             @endauth
@@ -572,7 +578,7 @@
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="flex items-center gap-3">
                     <div class="flex items-center justify-center w-8 h-8 bg-white/10 rounded-lg">
-                        <span class="text-white text-sm">🦅</span>
+                        <x-heroicon-s-academic-cap class="w-5 h-5 text-white" />
                     </div>
                     <span class="text-lg font-bold text-white tracking-tight">UniSocial</span>
                 </div>

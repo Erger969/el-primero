@@ -46,8 +46,8 @@
             <form action="{{ route('feed') }}" method="GET" class="flex flex-col gap-2 md:flex-row">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar publicaciones..." 
                        class="flex-1 px-4 py-3 text-slate-800 bg-white/20 placeholder-white/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary">
-                <button type="submit" class="px-6 py-3 font-semibold text-white transition-all duration-300 bg-secondary hover:bg-primary rounded-xl hover:scale-105">
-                    🔍 Buscar
+                <button type="submit" class="flex items-center justify-center gap-2 px-6 py-3 font-semibold text-white transition-all duration-300 bg-secondary hover:bg-primary rounded-xl hover:scale-105">
+                    <x-heroicon-o-magnifying-glass class="w-5 h-5" /> Buscar
                 </button>
             </form>
         </div>
@@ -62,7 +62,7 @@
             <div class="md:col-span-1 space-y-6">
                 <div class="p-6 bg-surface dark:bg-dark-surface rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
                     <h3 class="mb-4 font-bold text-text-primary dark:text-dark-text-primary flex items-center gap-2">
-                        <span>🔍</span> Filtrar
+                        <x-heroicon-o-funnel class="w-5 h-5" /> Filtrar
                     </h3>
                     <form method="GET" class="space-y-4">
                         <div>
@@ -101,15 +101,15 @@
                         </button>
                         
                         @if(request()->anyFilled(['career_id', 'date_filter', 'sort', 'search']))
-                            <a href="{{ route('feed') }}" class="block text-center text-xs text-secondary hover:text-primary font-medium transition-colors">
-                                ✖ Limpiar todo
+                            <a href="{{ route('feed') }}" class="block flex items-center justify-center gap-1 mt-4 text-xs text-secondary hover:text-primary font-medium transition-colors">
+                                <x-heroicon-o-x-mark class="w-4 h-4" /> Limpiar todo
                             </a>
                         @endif
                     </form>
                 </div>
 
-                <a href="{{ route('posts.create') }}" class="flex items-center justify-center gap-2 w-full p-4 font-bold text-white transition-all duration-300 rounded-2xl btn-secondary hover:scale-[1.02] active:scale-[0.98]">
-                    <span>✨</span> Nueva Publicación
+                <a href="{{ route('posts.create') }}" class="flex items-center justify-center gap-2 w-full p-4 font-bold text-white transition-all duration-300 rounded-2xl bg-gradient-to-r from-secondary to-primary shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
+                    <x-heroicon-o-sparkles class="w-5 h-5" /> Nueva Publicación
                 </a>
             </div>
             
@@ -120,8 +120,8 @@
                     <div class="mb-8 animate-fade-in">
                         <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
                             <div>
-                                <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary">
-                                    🔍 Resultados para: <span class="text-secondary">"{{ $search }}"</span>
+                                <h2 class="text-2xl font-bold text-text-primary dark:text-dark-text-primary flex items-center gap-2">
+                                    <x-heroicon-o-magnifying-glass class="w-6 h-6" /> Resultados para: <span class="text-secondary">"{{ $search }}"</span>
                                 </h2>
                                 <p class="text-sm text-text-secondary dark:text-dark-text-secondary mt-1">
                                     Filtrando por: <span class="font-bold text-primary">{{ $searchType === 'title' ? 'Títulos' : ($searchType === 'content' ? 'Descripciones' : 'Usuarios') }}</span>
@@ -133,7 +133,7 @@
                         <div class="flex flex-wrap gap-2 mb-4">
                             <a href="{{ route('feed', array_merge(request()->except(['search_type']), ['search_type' => 'title'])) }}" 
                                class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 {{ $searchType === 'title' ? 'bg-secondary text-white shadow-md' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
-                                <span>📌 Títulos</span>
+                                <span><x-heroicon-o-tag class="w-4 h-4 inline-block mr-1 -mt-0.5" /> Títulos</span>
                                 <span class="px-1.5 py-0.5 rounded-lg text-[10px] {{ $searchType === 'title' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
                                     {{ $searchCounts['title'] }}
                                 </span>
@@ -141,7 +141,7 @@
                             
                             <a href="{{ route('feed', array_merge(request()->except(['search_type']), ['search_type' => 'content'])) }}" 
                                class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 {{ $searchType === 'content' ? 'bg-secondary text-white shadow-md' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
-                                <span>📝 Descripciones</span>
+                                <span><x-heroicon-o-document-text class="w-4 h-4 inline-block mr-1 -mt-0.5" /> Descripciones</span>
                                 <span class="px-1.5 py-0.5 rounded-lg text-[10px] {{ $searchType === 'content' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
                                     {{ $searchCounts['content'] }}
                                 </span>
@@ -149,7 +149,7 @@
                             
                             <a href="{{ route('feed', array_merge(request()->except(['search_type']), ['search_type' => 'user'])) }}" 
                                class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 {{ $searchType === 'user' ? 'bg-secondary text-white shadow-md' : 'bg-surface dark:bg-dark-surface text-text-secondary hover:bg-gray-100 dark:hover:bg-gray-800' }}">
-                                <span>👥 Usuarios</span>
+                                <span><x-heroicon-o-user-group class="w-4 h-4 inline-block mr-1 -mt-0.5" /> Usuarios</span>
                                 <span class="px-1.5 py-0.5 rounded-lg text-[10px] {{ $searchType === 'user' ? 'bg-white/20' : 'bg-gray-200 dark:bg-gray-700' }}">
                                     {{ $searchCounts['user'] }}
                                 </span>
@@ -239,7 +239,7 @@
                             <summary class="flex items-center gap-2 px-6 py-4 cursor-pointer select-none
                                             text-sm font-bold text-text-secondary dark:text-dark-text-secondary
                                             hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors list-none">
-                                <span class="text-lg">💬</span>
+                                <x-heroicon-o-chat-bubble-left-ellipsis class="w-6 h-6" />
                                 <span>{{ $post->comments->count() }} comentario{{ $post->comments->count() !== 1 ? 's' : '' }}</span>
                                 <svg class="ml-auto w-4 h-4 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </summary>
@@ -289,7 +289,7 @@
                     </div>
                 @empty
                     <div class="py-20 text-center bg-surface dark:bg-dark-surface rounded-2xl shadow-sm border border-dashed border-gray-300 dark:border-gray-700">
-                        <div class="text-5xl mb-4">📭</div>
+                        <div class="text-5xl mb-4 flex justify-center text-gray-300 dark:text-gray-600"><x-heroicon-o-inbox class="w-16 h-16" /></div>
                         <h3 class="text-xl font-bold text-text-primary dark:text-dark-text-primary">No hay publicaciones</h3>
                         <p class="text-text-secondary dark:text-dark-text-secondary mt-2">Sé el primero en compartir algo con la comunidad.</p>
                         <a href="{{ route('posts.create') }}" class="mt-6 inline-block px-8 py-3 font-bold text-white rounded-xl btn-primary">
@@ -311,7 +311,7 @@
             <div class="flex flex-col md:flex-row items-center justify-between gap-8">
                 <div class="flex items-center gap-4">
                     <div class="flex items-center justify-center w-12 h-12 bg-white/10 rounded-2xl">
-                        <span class="text-2xl">🦅</span>
+                        <x-heroicon-s-academic-cap class="w-8 h-8 text-white" />
                     </div>
                     <div>
                         <span class="text-2xl font-bold text-white block">UniSocial</span>

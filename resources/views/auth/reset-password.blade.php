@@ -25,7 +25,7 @@
         
         <div class="text-center mb-8">
             <a href="{{ route('home') }}" class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1A3C5E] to-[#C4A35A] rounded-2xl shadow-lg hover:rotate-12 transition-all duration-300 mb-4 mx-auto">
-                <span class="text-3xl text-white">🦅</span>
+                <x-heroicon-s-academic-cap class="w-10 h-10 text-white" />
             </a>
             <h1 class="text-3xl font-bold tracking-tight text-white mb-2">Crear Nueva Contraseña</h1>
             <p class="text-gray-300">Ingresa el código numérico de 6 dígitos que enviamos a tu correo y tu nueva contraseña.</p>
@@ -47,7 +47,7 @@
                     <label for="email" class="block text-sm font-medium text-gray-200 mb-2">Correo Electrónico</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-400">✉️</span>
+                            <x-heroicon-o-envelope class="w-5 h-5 text-gray-400" />
                         </div>
                         <input id="email" class="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent text-white transition-all placeholder-gray-400" 
                                type="email" name="email" value="{{ old('email', request()->email) }}" required autofocus placeholder="tu@correo.com">
@@ -62,7 +62,7 @@
                     <label for="code" class="block text-sm font-medium text-gray-200 mb-2">Código de 6 dígitos</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-400">🔢</span>
+                            <x-heroicon-o-hashtag class="w-5 h-5 text-gray-400" />
                         </div>
                         <input id="code" class="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent text-white transition-all placeholder-gray-400 tracking-[0.5em] font-bold text-center" 
                                type="text" name="code" value="{{ old('code') }}" required maxlength="6" placeholder="000000">
@@ -77,7 +77,7 @@
                     <label for="password" class="block text-sm font-medium text-gray-200 mb-2">Nueva Contraseña</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-400">🔒</span>
+                            <x-heroicon-o-lock-closed class="w-5 h-5 text-gray-400" />
                         </div>
                         <input id="password" class="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent text-white transition-all placeholder-gray-400" 
                                type="password" name="password" required autocomplete="new-password" placeholder="Mínimo 8 caracteres">
@@ -92,7 +92,7 @@
                     <label for="password_confirmation" class="block text-sm font-medium text-gray-200 mb-2">Confirmar Contraseña</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-400">🔐</span>
+                            <x-heroicon-o-check-badge class="w-5 h-5 text-gray-400" />
                         </div>
                         <input id="password_confirmation" class="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent text-white transition-all placeholder-gray-400" 
                                type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Repite tu contraseña">
@@ -104,7 +104,7 @@
 
                 <div class="pt-4">
                     <button type="submit" class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-[#1A3C5E] to-[#2A6B9E] hover:from-[#C4A35A] hover:to-[#D4B06A] text-white font-bold rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-1">
-                        <span>💾</span> Guardar Contraseña
+                        <x-heroicon-o-arrow-down-on-square class="w-5 h-5" /> Guardar Contraseña
                     </button>
                 </div>
             </form>

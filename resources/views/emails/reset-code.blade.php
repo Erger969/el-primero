@@ -67,7 +67,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🦅 UniSocial</h1>
+            <h1>UniSocial</h1>
         </div>
         <div class="content">
             <h2>Hola, {{ $user->name }}</h2>
