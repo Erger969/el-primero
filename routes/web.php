@@ -13,7 +13,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Rutas de perfil y publicaciones (protegidas por auth logeados)
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'not_suspended'])->group(function () {
     // Perfil público (ver cualquier usuario)
     Route::get('/profile/{id}', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     // Edición de perfil (Breeze original)

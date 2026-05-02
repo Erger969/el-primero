@@ -142,20 +142,26 @@
                             $currentReaction = isset($userReaction) ? $userReaction->type : null;
                         @endphp
                         
-                        @foreach($reactionTypes as $key => $reaction)
-                            <button class="reaction-btn px-5 py-2.5 rounded-2xl font-bold transition-all duration-300 flex items-center gap-2 shadow-sm
-                                   {{ $currentReaction === $key 
-                                       ? $reaction['color'] . ' text-white scale-105 shadow-md' 
-                                       : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 border border-gray-100 dark:border-gray-700' }}"
-                                data-post-id="{{ $post->id }}"
-                                data-type="{{ $key }}">
-                                <span class="text-xl">{{ $reaction['emoji'] }}</span>
-                                <span>{{ $reaction['label'] }}</span>
-                                <span class="count-{{ $key }} ml-1 px-2.5 py-0.5 rounded-full text-xs font-black {{ $currentReaction === $key ? 'bg-white/30' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400' }}">
-                                    {{ $post->reactions->where('type', $key)->count() }}
-                                </span>
-                            </button>
-                        @endforeach
+                        @if(Auth::user()->role_id != 4)
+                            @foreach($reactionTypes as $key => $reaction)
+                                <button class="reaction-btn px-5 py-2.5 rounded-2xl font-bold transition-all duration-300 flex items-center gap-2 shadow-sm
+                                    {{ $currentReaction === $key 
+                                        ? $reaction['color'] . ' text-white scale-105 shadow-md' 
+                                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 border border-gray-100 dark:border-gray-700' }}"
+                                    data-post-id="{{ $post->id }}"
+                                    data-type="{{ $key }}">
+                                    <span class="text-xl">{{ $reaction['emoji'] }}</span>
+                                    <span>{{ $reaction['label'] }}</span>
+                                    <span class="count-{{ $key }} ml-1 px-2.5 py-0.5 rounded-full text-xs font-black {{ $currentReaction === $key ? 'bg-white/30' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400' }}">
+                                        {{ $post->reactions->where('type', $key)->count() }}
+                                    </span>
+                                </button>
+                            @endforeach
+                        @else
+                            <p class="text-sm font-medium text-red-500 bg-red-500/5 px-4 py-2 rounded-xl border border-red-500/20">
+                                🚫 Las reacciones están desactivadas para cuentas suspendidas.
+                            </p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -197,22 +203,31 @@
                 <!-- Comment Form -->
                 <div class="p-6 bg-gray-50 dark:bg-gray-800/40 border-t border-gray-100 dark:border-gray-800 z-10 shadow-[0_-10px_20px_-15px_rgba(0,0,0,0.1)]">
                     @auth
-                        <form action="{{ route('comments.store', $post) }}" method="POST">
-                            @csrf
-                            <div class="flex flex-col gap-3">
-                                <div class="flex gap-3">
-                                    <div class="flex-shrink-0 flex items-center justify-center w-11 h-11 text-sm font-bold text-[#1A3C5E] bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300 rounded-full shadow-inner">
-                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        @if(Auth::user()->role_id != 4)
+                            <form action="{{ route('comments.store', $post) }}" method="POST">
+                                @csrf
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex gap-3">
+                                        <div class="flex-shrink-0 flex items-center justify-center w-11 h-11 text-sm font-bold text-[#1A3C5E] bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300 rounded-full shadow-inner">
+                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                        </div>
+                                        <textarea name="content" required placeholder="Escribe tu comentario aquí..." rows="2"
+                                                class="w-full bg-white dark:bg-[#0f172a] border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 outline-none focus:ring-2 focus:ring-[#C4A35A] transition-all resize-none shadow-sm"></textarea>
                                     </div>
-                                    <textarea name="content" required placeholder="Escribe tu comentario aquí..." rows="2"
-                                              class="w-full bg-white dark:bg-[#0f172a] border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 text-sm text-gray-900 dark:text-gray-100 outline-none focus:ring-2 focus:ring-[#C4A35A] transition-all resize-none shadow-sm"></textarea>
+                                    <button type="submit" class="self-end px-6 py-2.5 bg-gradient-to-r from-[#1A3C5E] to-[#2A6B9E] hover:from-[#C4A35A] hover:to-[#D4B06A] text-white font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2">
+                                        <span>Publicar</span>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                    </button>
                                 </div>
-                                <button type="submit" class="self-end px-6 py-2.5 bg-gradient-to-r from-[#1A3C5E] to-[#2A6B9E] hover:from-[#C4A35A] hover:to-[#D4B06A] text-white font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2">
-                                    <span>Publicar</span>
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                                </button>
+                            </form>
+                        @else
+                            <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-center">
+                                <p class="text-sm font-bold text-red-600 dark:text-red-400 flex items-center justify-center gap-2">
+                                    <x-heroicon-s-no-symbol class="w-5 h-5" /> 
+                                    Tu cuenta está suspendida. No puedes comentar.
+                                </p>
                             </div>
-                        </form>
+                        @endif
                     @else
                         <div class="text-center py-2">
                             <a href="{{ route('home') }}" class="inline-block w-full px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm">

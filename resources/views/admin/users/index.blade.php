@@ -119,9 +119,16 @@
                                                 </form>
                                             @elseif($user->role_id != 3)
                                                 <form action="{{ route('admin.users.suspend', $user->id) }}" 
-                                                    method="POST" class="inline-block">
+                                                    method="POST" class="inline-flex items-center gap-1">
                                                     @csrf
                                                     @method('PUT')
+                                                    <select name="duration" class="text-[10px] py-0.5 px-1 border-gray-300 rounded focus:ring-0 w-20">
+                                                        <option value="1">1 día</option>
+                                                        <option value="3">3 días</option>
+                                                        <option value="7">7 días</option>
+                                                        <option value="30">30 días</option>
+                                                        <option value="permanent">Permanente</option>
+                                                    </select>
                                                     <button type="submit" class="bg-yellow-500 hover:bg-yellow-700 text-white px-2 py-1 rounded text-xs"
                                                             onclick="return confirm('¿Suspender este usuario?')"
                                                             title="Suspender usuario">

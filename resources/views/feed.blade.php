@@ -63,6 +63,11 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <!-- Sidebar Filtros -->
             <div class="md:col-span-1 space-y-6">
+                @if(Auth::user()->role_id != 4)
+                    <a href="{{ route('posts.create') }}" class="flex items-center justify-center gap-2 w-full p-4 font-bold text-white transition-all duration-300 rounded-2xl bg-gradient-to-r from-secondary to-primary shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]">
+                        <x-heroicon-o-sparkles class="w-5 h-5" /> Nueva Publicación
+                    </a>
+                @endif
                 <div class="p-6 bg-surface dark:bg-dark-surface rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
                     <h3 class="mb-4 font-bold text-text-primary dark:text-dark-text-primary flex items-center gap-2">
                         <x-heroicon-o-funnel class="w-5 h-5" /> Filtrar
@@ -113,6 +118,8 @@
 
                 </a>
 
+                @endif
+
                 {{-- Contador de acciones para Masters --}}
                 @if(Auth::user()->role_id == 2)
                     @php
@@ -140,10 +147,43 @@
                         </div>
                     </div>
                 @endif
+
+                {{-- Estado para Usuarios Suspendidos --}}
+                @if(Auth::user()->role_id == 4)
+                    <div class="p-6 bg-red-500/10 rounded-2xl shadow-sm border border-red-500/30 backdrop-blur-sm">
+                        <h3 class="mb-2 font-bold text-red-600 flex items-center gap-2">
+                            <x-heroicon-s-no-symbol class="w-5 h-5" /> Modo Lectura
+                        </h3>
+                        <p class="text-[10px] text-red-500/80 leading-tight">
+                            Tu capacidad de interactuar ha sido restringida. Puedes ver publicaciones y comentarios, pero no crear contenido nuevo.
+                        </p>
+                    </div>
+                @endif
             </div>
             
             <!-- Feed de Publicaciones -->
             <div class="md:col-span-3 space-y-6">
+                @if(Auth::user()->role_id == 4)
+                    <div class="mb-6 p-6 bg-red-500/10 border-2 border-red-500/20 rounded-2xl backdrop-blur-md animate-pulse">
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 bg-red-500 rounded-xl text-white shadow-lg shadow-red-500/20">
+                                <x-heroicon-s-no-symbol class="w-8 h-8" />
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-red-600 dark:text-red-400">CUENTA SUSPENDIDA</h3>
+                                <p class="text-sm text-red-500 font-medium">
+                                    Tu cuenta está en modo lectura por infringir las normas de la comunidad. 
+                                    @if(Auth::user()->suspended_until)
+                                        La restricción terminará el <strong>{{ Auth::user()->suspended_until->format('d/m/Y H:i') }}</strong>.
+                                    @else
+                                        Esta restricción es <strong>permanente</strong>.
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- SECCIÓN DE RESULTADOS DE BÚSQUEDA (Si existe búsqueda) -->
                 @if($search)
                     <div class="mb-8 animate-fade-in">

@@ -83,7 +83,7 @@ class UserController extends Controller
     }
 
     // Suspender usuario (cambiar rol a 4)
-    public function suspend($id)
+    public function suspend(Request $request, $id)
     {
         $user = User::findOrFail($id);
         
@@ -92,11 +92,22 @@ class UserController extends Controller
                 ->with('error', 'No se puede suspender a un administrador.');
         }
 
+        $duration = $request->input('duration', 'permanent');
+        $suspendedUntil = null;
+
+        if ($duration !== 'permanent') {
+            $suspendedUntil = now()->addDays((int)$duration);
+        }
+
         $user->role_id = 4;
+        $user->suspended_until = $suspendedUntil;
         $user->save();
 
-        return redirect()->route('admin.users.index')
-            ->with('success', 'Usuario suspendido exitosamente.');
+        $message = 'Usuario suspendido exitosamente';
+        $message .= $suspendedUntil ? ' hasta el ' . $suspendedUntil->format('d/m/Y H:i') : ' permanentemente';
+        $message .= '.';
+
+        return redirect()->route('admin.users.index')->with('success', $message);
     }
 
     // Restaurar usuario (cambiar rol a 1)
