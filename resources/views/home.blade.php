@@ -121,7 +121,7 @@
                             <h2 class="mt-3 text-2xl font-bold text-text-primary dark:text-dark-text-primary">Iniciar sesión</h2>
                         </div>
                         
-                        <form method="POST" action="{{ route('login') }}">
+                        <form method="POST" action="{{ route('login') }}" x-data="{ showPass: false }">
                             @csrf
                             <div class="mb-4">
                                 <label class="block mb-2 font-semibold text-text-primary dark:text-dark-text-primary">Email</label>
@@ -132,8 +132,14 @@
                             
                             <div class="mb-4">
                                 <label class="block mb-2 font-semibold text-text-primary dark:text-dark-text-primary">Contraseña</label>
-                                <input type="password" name="password" required
-                                       class="w-full px-4 py-3 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                <div class="relative">
+                                    <input x-bind:type="showPass ? 'text' : 'password'" name="password" required
+                                           class="w-full px-4 py-3 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                    <button type="button" @click="showPass = !showPass" class="absolute right-4 top-3 text-gray-400 hover:text-gray-600 transition-colors">
+                                        <span x-show="!showPass" title="Mostrar contraseña">👁️</span>
+                                        <span x-show="showPass" title="Ocultar contraseña" style="display: none;">🙈</span>
+                                    </button>
+                                </div>
                                 @error('password')<p class="mt-1 text-sm text-red-500">{{ $message }}</p>@enderror
                             </div>
                             
@@ -169,18 +175,21 @@
                             <h2 class="mt-3 text-2xl font-bold text-text-primary dark:text-dark-text-primary">Crear cuenta</h2>
                         </div>
                         
-                        <form method="POST" action="{{ route('register') }}">
+                        <form method="POST" action="{{ route('register') }}" autocomplete="off" x-data="{ showPass1: false, showPass2: false }">
+                            <!-- Evitar auto-completado del navegador con inputs ocultos -->
+                            <input type="email" style="display:none">
+                            <input type="password" style="display:none">
                             @csrf
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Nombre</label>
-                                    <input type="text" name="name" value="{{ old('name') }}" required
+                                    <input type="text" name="name" value="{{ old('name') }}" required pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios" autocomplete="new-password"
                                            class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
                                     @error('name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Apellidos</label>
-                                    <input type="text" name="lastname" value="{{ old('lastname') }}" required
+                                    <input type="text" name="lastname" value="{{ old('lastname') }}" required pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios" autocomplete="new-password"
                                            class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
                                     @error('lastname')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                                 </div>
@@ -188,7 +197,7 @@
                             
                             <div class="mb-3">
                                 <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Email</label>
-                                <input type="email" name="email" value="{{ old('email') }}" required
+                                <input type="email" name="email" value="{{ old('email') }}" required autocomplete="new-password"
                                        class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
                                 @error('email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                             </div>
@@ -207,14 +216,24 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Contraseña</label>
-                                    <input type="password" name="password" required
-                                           class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                    <div class="relative">
+                                        <input x-bind:type="showPass1 ? 'text' : 'password'" name="password" required minlength="8" autocomplete="new-password"
+                                               class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                        <button type="button" @click="showPass1 = !showPass1" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 transition-colors">
+                                            <span x-show="!showPass1">👁️</span><span x-show="showPass1" style="display: none;">🙈</span>
+                                        </button>
+                                    </div>
                                     @error('password')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                                 </div>
                                 <div>
                                     <label class="block mb-1 text-sm font-semibold text-text-primary dark:text-dark-text-primary">Confirmar</label>
-                                    <input type="password" name="password_confirmation" required
-                                           class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                    <div class="relative">
+                                        <input x-bind:type="showPass2 ? 'text' : 'password'" name="password_confirmation" required minlength="8" autocomplete="new-password"
+                                               class="w-full px-3 py-2 transition border border-gray-200 rounded-xl dark:border-gray-700 bg-gray-50 dark:bg-dark-background focus:ring-2 focus:ring-secondary">
+                                        <button type="button" @click="showPass2 = !showPass2" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 transition-colors">
+                                            <span x-show="!showPass2">👁️</span><span x-show="showPass2" style="display: none;">🙈</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
