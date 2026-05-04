@@ -320,11 +320,12 @@
                                 ];
                                 $currentReaction = $userReactions[$post->id]->type ?? null;
                             @endphp
-                            <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                            <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-100 dark:border-gray-800 {{ auth()->user()->role_id == 4 ? 'opacity-50 grayscale pointer-events-none' : '' }}">
                                 @foreach($reactionTypes as $key => $reaction)
                                     <button class="reaction-btn px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5
                                         {{ $currentReaction === $key ? $reaction['color'].' text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700' }}"
-                                        data-post-id="{{ $post->id }}" data-type="{{ $key }}">
+                                        data-post-id="{{ $post->id }}" data-type="{{ $key }}"
+                                        {{ auth()->user()->role_id == 4 ? 'disabled' : '' }}>
                                         <span>{{ $reaction['emoji'] }}</span>
                                         <span class="count-{{ $key }}" data-post-id="{{ $post->id }}">{{ $post->reactions->where('type', $key)->count() }}</span>
                                     </button>
@@ -367,20 +368,24 @@
                                 @endif
 
                                 {{-- Formulario para comentar --}}
-                                <form action="{{ route('comments.store', $post) }}" method="POST">
+                                <form action="{{ route('comments.store', $post) }}" method="POST" class="{{ auth()->user()->role_id == 4 ? 'opacity-60 grayscale cursor-not-allowed' : '' }}">
                                     @csrf
                                     <div class="flex items-center gap-3">
                                         <div class="flex-shrink-0 flex items-center justify-center w-9 h-9 text-xs font-bold text-white rounded-full bg-primary/20 text-primary border border-primary/10">
                                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                         </div>
                                         <div class="flex-1 flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-full px-5 py-2.5 focus-within:ring-2 focus-within:ring-secondary/50 transition-all">
-                                            <input type="text" name="content" required placeholder="Añade un comentario..."
+                                            <input type="text" name="content" required placeholder="{{ auth()->user()->role_id == 4 ? 'Comentarios restringidos...' : 'Añade un comentario...' }}"
+                                                   {{ auth()->user()->role_id == 4 ? 'disabled' : '' }}
                                                    class="flex-1 bg-transparent text-sm text-text-primary dark:text-dark-text-primary outline-none placeholder-gray-400">
-                                            <button type="submit" class="text-secondary hover:text-primary transition-colors flex-shrink-0">
+                                            <button type="submit" {{ auth()->user()->role_id == 4 ? 'disabled' : '' }} class="text-secondary hover:text-primary transition-colors flex-shrink-0">
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                                             </button>
                                         </div>
                                     </div>
+                                    @if(auth()->user()->role_id == 4)
+                                        <p class="text-[10px] text-red-500 mt-2 ml-12 font-medium">Modo lectura activo: No puedes comentar por ahora.</p>
+                                    @endif
                                 </form>
                             </div>
                         </details>

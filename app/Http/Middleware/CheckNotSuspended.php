@@ -13,7 +13,7 @@ class CheckNotSuspended
         if (Auth::check()) {
             $user = Auth::user();
             
-            if ($user->role_id == 4) {
+            if ($user->role_id == 4 && $user->role_id != 3) { // Solo si es suspendido y no es Admin
                 // Verificar si la suspensión ha expirado
                 if ($user->suspended_until && $user->suspended_until < now()) {
                     // Restaurar usuario automáticamente

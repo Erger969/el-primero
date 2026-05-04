@@ -24,8 +24,8 @@ class PostController extends Controller
         $user = Auth::user();
         $query = Post::with(['user', 'comments.user', 'reactions']);
         
-        // Solo usuarios normales ven solo lo visible. Masters (2) y Admins (3) ven todo.
-        if ($user->role_id < 2) {
+        // Solo Masters (2) y Admins (3) ven todo. Usuarios normales (1) y Suspendidos (4) ven solo lo visible.
+        if (!in_array($user->role_id, [2, 3])) {
             $query->visible();
         }
         
@@ -74,7 +74,7 @@ class PostController extends Controller
 
         if ($search) {
             $visibilityQuery = Post::query();
-            if ($user->role_id < 2) {
+            if (!in_array($user->role_id, [2, 3])) {
                 $visibilityQuery->visible();
             }
 

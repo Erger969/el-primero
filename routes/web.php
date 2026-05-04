@@ -75,7 +75,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // Rutas para Masters (ocultar publicaciones)
-Route::middleware(['auth'])->prefix('master')->name('master.')->group(function () {
+Route::middleware(['auth', 'not_suspended'])->prefix('master')->name('master.')->group(function () {
     Route::post('/posts/{post}/hide', [App\Http\Controllers\Master\HideController::class, 'toggle'])->name('posts.hide');
 });
 
