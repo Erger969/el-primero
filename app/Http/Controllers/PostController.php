@@ -128,28 +128,46 @@ class PostController extends Controller
         $imageUrls = [];
 
         if ($request->hasFile('images')) {
-            // Usar configuración desde config/cloudinary.php (que lee del .env)
-            $cloudinary = new Cloudinary([
-                'cloud' => [
-                    'cloud_name' => config('cloudinary.cloud_name'),
-                    'api_key'    => config('cloudinary.api_key'),
-                    'api_secret' => config('cloudinary.api_secret'),
-                ],
-                'url' => [
-                    'secure' => config('cloudinary.secure')
-                ]
-            ]);
-
+            $cloudName = config('cloudinary.cloud_name');
+            $useCloudinary = !empty($cloudName);
+            
             foreach ($request->file('images') as $image) {
-                $uploadResult = $cloudinary->uploadApi()->upload($image->getRealPath(), [
-                    'folder' => 'red_social_publicaciones',
-                    'transformation' => [
-                        'width' => 800,
-                        'height' => 600,
-                        'crop' => 'limit'
-                    ]
-                ]);
-                $imageUrls[] = $uploadResult['secure_url'];
+                $uploaded = false;
+                
+                if ($useCloudinary) {
+                    try {
+                        $cloudinary = new Cloudinary([
+                            'cloud' => [
+                                'cloud_name' => $cloudName,
+                                'api_key'    => config('cloudinary.api_key'),
+                                'api_secret' => config('cloudinary.api_secret'),
+                            ],
+                            'url' => [
+                                'secure' => config('cloudinary.secure', true)
+                            ]
+                        ]);
+
+                        $uploadResult = $cloudinary->uploadApi()->upload($image->getRealPath(), [
+                            'folder' => 'red_social_publicaciones',
+                            'transformation' => [
+                                'width' => 800,
+                                'height' => 600,
+                                'crop' => 'limit'
+                            ]
+                        ]);
+                        $imageUrls[] = $uploadResult['secure_url'];
+                        $uploaded = true;
+                    } catch (\Exception $e) {
+                        // Cloudinary falló, usar local
+                        $uploaded = false;
+                    }
+                }
+
+                if (!$uploaded) {
+                    // Fallback: Almacenamiento Local
+                    $path = $image->store('posts', 'public');
+                    $imageUrls[] = asset('storage/' . $path);
+                }
             }
         }
 
