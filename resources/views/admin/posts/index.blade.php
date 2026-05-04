@@ -1,135 +1,133 @@
-<x-app-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h1 class="text-2xl font-bold mb-6">📝 Gestión de Publicaciones</h1>
+@extends('layouts.admin')
 
-                    @if(session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+@section('header_title', 'Gestión de Publicaciones')
 
-                    <!-- Filtros -->
-                    <form method="GET" class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <input type="text" name="search" placeholder="Buscar por título..." 
+@section('content')
+<div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="p-8">
+        <!-- Filtros -->
+        <div class="mb-8">
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Buscar por título</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <x-heroicon-o-magnifying-glass class="w-5 h-5" />
+                        </span>
+                        <input type="text" name="search" placeholder="Título de la publicación..." 
                                value="{{ request('search') }}"
-                               class="border-gray-300 rounded-md shadow-sm">
-
-                        <select name="hidden" class="border-gray-300 rounded-md shadow-sm">
-                            <option value="">Todas las publicaciones</option>
-                            <option value="no" {{ request('hidden') == 'no' ? 'selected' : '' }}>Solo visibles</option>
-                            <option value="yes" {{ request('hidden') == 'yes' ? 'selected' : '' }}>Solo ocultas</option>
-                        </select>
-
-                        <select name="user_id" class="border-gray-300 rounded-md shadow-sm">
-                            <option value="">Todos los usuarios</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }} {{ $user->lastname }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            🔍 Filtrar
-                        </button>
-                    </form>
-
-                    <!-- Tabla de publicaciones -->
-                    <div class="overflow-x-auto shadow-md rounded-lg">
-                        <table class="min-w-full bg-white border border-gray-200">
-                            <thead>
-                                <tr class="bg-gray-100 border-b">
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">ID</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-48">Título</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-40">Autor</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-28">Fecha</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">Estado</th>
-                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase w-48">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @foreach($posts as $post)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 whitespace-nowrap text-sm">{{ $post->id }}</td>
-                                    <td class="px-4 py-3 text-sm">
-                                        <a href="{{ route('posts.show', $post) }}" target="_blank" class="text-blue-600 hover:underline">
-                                            {{ Str::limit($post->title, 50) }}
-                                        </a>
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
-                                        {{ $post->user->name }} {{ $post->user->lastname }}
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
-                                        {{ $post->created_at->format('d/m/Y') }}
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap">
-                                        @if($post->is_hidden)
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
-                                                🔒 Oculto
-                                            </span>
-                                        @else
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                                                ✅ Visible
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-center">
-                                        <div class="flex justify-center gap-1">
-                                            <a href="{{ route('admin.posts.edit', $post->id) }}" 
-                                               class="bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs"
-                                               title="Editar publicación">
-                                                ✏️ Editar
-                                            </a>
-                                            
-                                            @if($post->is_hidden)
-                                                <form action="{{ route('admin.posts.show', $post->id) }}" 
-                                                      method="POST" class="inline-block">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white px-2 py-1 rounded text-xs"
-                                                            title="Mostrar publicación">
-                                                        👁️ Mostrar
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <form action="{{ route('admin.posts.hide', $post->id) }}" 
-                                                      method="POST" class="inline-block">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-700 text-white px-2 py-1 rounded text-xs"
-                                                            onclick="return confirm('¿Ocultar esta publicación?')"
-                                                            title="Ocultar publicación">
-                                                        🔒 Ocultar
-                                                    </button>
-                                                </form>
-                                            @endif
-                                            
-                                            <form action="{{ route('admin.posts.destroy', $post->id) }}" 
-                                                  method="POST" class="inline-block"
-                                                  onsubmit="return confirm('¿Eliminar esta publicación? Se borrarán también sus comentarios y reacciones.')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-2 py-1 rounded text-xs"
-                                                        title="Eliminar publicación">
-                                                    🗑️ Eliminar
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-4">
-                        {{ $posts->appends(request()->query())->links() }}
+                               class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 transition-all">
                     </div>
                 </div>
-            </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Estado</label>
+                    <select name="hidden" class="w-full py-2.5 bg-slate-50 dark:bg-slate-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                        <option value="">Todas</option>
+                        <option value="no" {{ request('hidden') == 'no' ? 'selected' : '' }}>Solo visibles</option>
+                        <option value="yes" {{ request('hidden') == 'yes' ? 'selected' : '' }}>Solo ocultas</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end">
+                    <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                        <x-heroicon-o-funnel class="w-5 h-5" />
+                        Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabla de publicaciones -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
+                        <th class="pb-4 px-4">Publicación</th>
+                        <th class="pb-4 px-4">Autor</th>
+                        <th class="pb-4 px-4 text-center">Estado</th>
+                        <th class="pb-4 px-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                    @foreach($posts as $post)
+                    <tr class="group hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
+                        <td class="py-5 px-4">
+                            <div class="flex items-center gap-4">
+                                @if(!empty($post->images) && count($post->images) > 0)
+                                    <img src="{{ $post->images[0] }}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
+                                @else
+                                    <div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
+                                        <x-heroicon-o-photo class="w-6 h-6" />
+                                    </div>
+                                @endif
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800 dark:text-white truncate max-w-xs">{{ $post->title }}</p>
+                                    <p class="text-[10px] text-slate-500">{{ $post->created_at->format('d/m/Y H:i') }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-5 px-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-400">{{ $post->user->name }} {{ $post->user->lastname }}</span>
+                            </div>
+                        </td>
+                        <td class="py-5 px-4 text-center">
+                            @if($post->is_hidden)
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800">
+                                    Oculto
+                                </span>
+                            @else
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800">
+                                    Visible
+                                </span>
+                            @endif
+                        </td>
+                        <td class="py-5 px-4">
+                            <div class="flex justify-end gap-2">
+                                <a href="{{ route('posts.show', $post) }}" target="_blank" class="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all" title="Ver">
+                                    <x-heroicon-o-eye class="w-5 h-5" />
+                                </a>
+                                <a href="{{ route('admin.posts.edit', $post->id) }}" class="p-2 text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-all" title="Editar">
+                                    <x-heroicon-o-pencil-square class="w-5 h-5" />
+                                </a>
+                                
+                                @if($post->is_hidden)
+                                    <form action="{{ route('admin.posts.show', $post->id) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="p-2 text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all" title="Hacer Visible">
+                                            <x-heroicon-o-lock-open class="w-5 h-5" />
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('admin.posts.hide', $post->id) }}" method="POST" class="inline-block" onsubmit="return confirm('¿Ocultar esta publicación?')">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all" title="Ocultar">
+                                            <x-heroicon-o-lock-closed class="w-5 h-5" />
+                                        </button>
+                                    </form>
+                                @endif
+
+                                <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" onsubmit="return confirm('¿Eliminar definitivamente?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all" title="Eliminar">
+                                        <x-heroicon-o-trash class="w-5 h-5" />
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8">
+            {{ $posts->appends(request()->query())->links() }}
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection

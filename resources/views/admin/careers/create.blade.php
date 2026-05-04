@@ -1,44 +1,41 @@
-<x-app-layout>
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h1 class="text-2xl font-bold mb-6">➕ Nueva Carrera</h1>
+@extends('layouts.admin')
 
-                    <form action="{{ route('admin.careers.store') }}" method="POST">
-                        @csrf
+@section('header_title', 'Registrar Nueva Carrera')
 
-                        <div class="mb-4">
-                            <label for="nombre" class="block text-gray-700 font-bold mb-2">Nombre de la Carrera *</label>
-                            <input type="text" name="nombre" id="nombre" value="{{ old('nombre') }}" 
-                                   class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                   required>
-                            @error('nombre')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+@section('content')
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden animate-fade-in">
+        <div class="p-8">
+            <form action="{{ route('admin.careers.store') }}" method="POST" class="space-y-6">
+                @csrf
 
-                        <div class="mb-4">
-                            <label for="facultad" class="block text-gray-700 font-bold mb-2">Facultad</label>
-                            <input type="text" name="facultad" id="facultad" value="{{ old('facultad') }}" 
-                                   class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('facultad')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="flex justify-end gap-2">
-                            <a href="{{ route('admin.careers.index') }}" 
-                               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                Cancelar
-                            </a>
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Guardar Carrera
-                            </button>
-                        </div>
-                    </form>
+                <div>
+                    <label for="nombre" class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nombre de la Carrera</label>
+                    <input type="text" name="nombre" id="nombre" value="{{ old('nombre') }}" required
+                           placeholder="Ej. Ingeniería de Sistemas"
+                           class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 transition-all">
+                    @error('nombre') <p class="text-rose-500 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
                 </div>
-            </div>
+
+                <div>
+                    <label for="facultad" class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Facultad / Unidad Académica</label>
+                    <input type="text" name="facultad" id="facultad" value="{{ old('facultad') }}"
+                           placeholder="Ej. Facultad de Ingeniería"
+                           class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border-none rounded-xl focus:ring-2 focus:ring-blue-500 transition-all">
+                    @error('facultad') <p class="text-rose-500 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="flex items-center justify-end gap-4 pt-4 border-t border-slate-50 dark:border-slate-700/50">
+                    <a href="{{ route('admin.careers.index') }}" class="px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                        <x-heroicon-o-check class="w-5 h-5" />
+                        Registrar Carrera
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection

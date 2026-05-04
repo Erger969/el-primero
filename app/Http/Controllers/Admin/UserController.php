@@ -42,6 +42,26 @@ class UserController extends Controller
         return view('admin.users.index', compact('users', 'careers', 'roles'));
     }
 
+    // Listar usuarios suspendidos
+    public function suspended(Request $request)
+    {
+        $query = User::where('role_id', 4)->with(['career', 'posts']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('lastname', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->orderBy('suspended_until', 'asc')->paginate(15);
+        $roles = [1 => 'Universitario', 2 => 'Master', 3 => 'Administrador', 4 => 'Suspendido'];
+
+        return view('admin.users.suspended', compact('users', 'roles'));
+    }
+
     // Mostrar formulario para editar usuario
     public function edit($id)
     {

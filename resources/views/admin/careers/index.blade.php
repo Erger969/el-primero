@@ -1,68 +1,75 @@
-<x-app-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h1 class="text-2xl font-bold">📚 Gestión de Carreras</h1>
-                        <a href="{{ route('admin.careers.create') }}" 
-                           class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            + Nueva Carrera
-                        </a>
-                    </div>
+@extends('layouts.admin')
 
-                    @if(session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+@section('header_title', 'Gestión de Carreras')
 
-                    @if(session('error'))
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Facultad</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuarios</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @foreach($careers as $career)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $career->id }}</td>
-                                    <td class="px-6 py-4">{{ $career->nombre }}</td>
-                                    <td class="px-6 py-4">{{ $career->facultad ?? '—' }}</td>
-                                    <td class="px-6 py-4">{{ $career->users_count ?? $career->users()->count() }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <a href="{{ route('admin.careers.edit', $career->id) }}" 
-                                           class="text-blue-600 hover:text-blue-900 mr-3">✏️ Editar</a>
-                                        <form action="{{ route('admin.careers.destroy', $career->id) }}" 
-                                              method="POST" class="inline-block"
-                                              onsubmit="return confirm('¿Eliminar esta carrera?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900">🗑️ Eliminar</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-4">
-                        {{ $careers->links() }}
-                    </div>
-                </div>
+@section('content')
+<div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="p-8">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <p class="text-sm text-slate-500">Administra las carreras disponibles en la plataforma</p>
             </div>
+            <a href="{{ route('admin.careers.create') }}" 
+               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-blue-900/20 transition-all flex items-center gap-2">
+                <x-heroicon-o-plus class="w-5 h-5" />
+                Nueva Carrera
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
+                        <th class="pb-4 px-4">ID</th>
+                        <th class="pb-4 px-4">Carrera</th>
+                        <th class="pb-4 px-4">Facultad</th>
+                        <th class="pb-4 px-4 text-center">Usuarios</th>
+                        <th class="pb-4 px-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                    @foreach($careers as $career)
+                    <tr class="group hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
+                        <td class="py-5 px-4 text-sm font-mono text-slate-400">#{{ $career->id }}</td>
+                        <td class="py-5 px-4 text-sm font-bold text-slate-800 dark:text-white">
+                            {{ $career->nombre }}
+                        </td>
+                        <td class="py-5 px-4">
+                            <span class="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2.5 py-1 rounded-lg">
+                                {{ $career->facultad ?? 'No especificada' }}
+                            </span>
+                        </td>
+                        <td class="py-5 px-4 text-center">
+                            <span class="text-sm font-black text-blue-600 dark:text-blue-400">
+                                {{ $career->users_count ?? $career->users()->count() }}
+                            </span>
+                        </td>
+                        <td class="py-5 px-4">
+                            <div class="flex justify-end gap-2">
+                                <a href="{{ route('admin.careers.edit', $career->id) }}" 
+                                   class="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all">
+                                    <x-heroicon-o-pencil-square class="w-5 h-5" />
+                                </a>
+                                <form action="{{ route('admin.careers.destroy', $career->id) }}" 
+                                      method="POST" 
+                                      onsubmit="return confirm('¿Eliminar esta carrera?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all">
+                                        <x-heroicon-o-trash class="w-5 h-5" />
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8">
+            {{ $careers->links() }}
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection

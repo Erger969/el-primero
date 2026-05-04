@@ -56,17 +56,25 @@ class DashboardController extends Controller
         $totalPosts = Post::count();
         $totalComments = Comment::count();
 
-        // Publicaciones recientes
-        $recentPosts = Post::with('user')
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
+        // ========== Datos para Gráfico de Actividad (Últimos 7 días) ==========
+        $days = collect();
+        $postsPerDay = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $days->push(now()->subDays($i)->translatedFormat('D d'));
+            $postsPerDay->push(Post::whereDate('created_at', $date)->count());
+        }
+
+        // ========== Reportes y Solicitudes Recientes ==========
+        $recentReports = Report::with(['user', 'post'])->where('status', 'pending')->latest()->limit(5)->get();
+        $recentMasterRequests = MasterRequest::with('user')->where('status', 'pending')->latest()->limit(5)->get();
 
         return view('admin.dashboard', compact(
             'postsToday', 'postsThisWeek', 'postsThisMonth',
             'topCommentedPosts', 'topReactedPosts',
             'topUsers', 'usersByCareer', 'totalReports', 'totalMasterRequests',
-            'totalUsers', 'totalPosts', 'totalComments', 'recentPosts'
+            'totalUsers', 'totalPosts', 'totalComments',
+            'days', 'postsPerDay', 'recentReports', 'recentMasterRequests'
         ));
     }
 }
