@@ -77,7 +77,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/comments', [App\Http\Controllers\Admin\CommentController::class, 'index'])->name('comments.index');
     Route::delete('/comments/{id}', [App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('comments.destroy');
     Route::get('/media', [App\Http\Controllers\Admin\MediaController::class, 'index'])->name('media.index');
+    // Seguridad y Auditoría
     Route::get('/logs', [App\Http\Controllers\Admin\LogController::class, 'index'])->name('logs.index');
+    Route::get('/password-resets', [App\Http\Controllers\Admin\PasswordResetLogController::class, 'index'])->name('password-resets.index');
     Route::delete('/master-activity/{id}/revoke', [App\Http\Controllers\Admin\MasterActivityController::class, 'revokePermissions'])->name('master-activity.revoke');
 });
 
