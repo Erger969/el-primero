@@ -123,6 +123,11 @@ class UserController extends Controller
         $user->suspended_until = $suspendedUntil;
         $user->save();
 
+        AdminLog::log('user_suspended', $user, [
+            'duration' => $duration,
+            'until' => $suspendedUntil ? $suspendedUntil->format('Y-m-d H:i') : 'permanent'
+        ]);
+
         $message = 'Usuario suspendido exitosamente';
         $message .= $suspendedUntil ? ' hasta el ' . $suspendedUntil->format('d/m/Y H:i') : ' permanentemente';
         $message .= '.';
@@ -136,6 +141,8 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->role_id = 1;
         $user->save();
+
+        AdminLog::log('user_restored', $user);
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuario restaurado exitosamente.');
@@ -151,6 +158,8 @@ class UserController extends Controller
                 ->with('error', 'No se puede eliminar a un administrador.');
         }
 
+        AdminLog::log('user_deleted', null, ['user_name' => $user->name, 'user_id' => $user->id]);
+        
         $user->delete();
 
         return redirect()->route('admin.users.index')

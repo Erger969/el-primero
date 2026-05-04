@@ -129,28 +129,17 @@
                     <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                         <span>⭐</span> Reacciones
                     </h4>
-                    <div class="flex flex-wrap gap-3">
-                        @php
-                            $reactionTypes = [
-                                'ya'  => ['emoji' => '😊', 'label' => 'Ya',  'color' => 'bg-green-500'],
-                                'ahh' => ['emoji' => '😮', 'label' => 'Ahh', 'color' => 'bg-yellow-500'],
-                                'ehh' => ['emoji' => '🤔', 'label' => 'Ehh', 'color' => 'bg-purple-500'],
-                                'ohh' => ['emoji' => '😲', 'label' => 'Ohh', 'color' => 'bg-red-500'],
-                                'uhh' => ['emoji' => '😅', 'label' => 'Uhh', 'color' => 'bg-blue-500'],
-                            ];
-                            // Usamos el mismo patrón que el Feed si es que la variable existe de otra forma
-                        <div class="flex flex-wrap gap-3 {{ Auth::user()->role_id == 4 ? 'opacity-50 grayscale pointer-events-none' : '' }}">
-                        @php
-                            $reactionTypes = [
-                                'ya'  => ['emoji' => '😊', 'label' => 'Ya',  'color' => 'bg-green-500'],
-                                'ahh' => ['emoji' => '😮', 'label' => 'Ahh', 'color' => 'bg-yellow-500'],
-                                'ehh' => ['emoji' => '🤔', 'label' => 'Ehh', 'color' => 'bg-purple-500'],
-                                'ohh' => ['emoji' => '😲', 'label' => 'Ohh', 'color' => 'bg-red-500'],
-                                'uhh' => ['emoji' => '😅', 'label' => 'Uhh', 'color' => 'bg-blue-500'],
-                            ];
-                            // Usamos el mismo patrón que el Feed si es que la variable existe de otra forma
-                            $currentReaction = isset($userReaction) ? $userReaction->type : null;
-                        @endphp
+                                @php
+                                    $reactionTypes = [
+                                        'ya'  => ['emoji' => '😊', 'label' => 'Ya',  'color' => 'bg-green-500'],
+                                        'ahh' => ['emoji' => '😮', 'label' => 'Ahh', 'color' => 'bg-yellow-500'],
+                                        'ehh' => ['emoji' => '🤔', 'label' => 'Ehh', 'color' => 'bg-purple-500'],
+                                        'ohh' => ['emoji' => '😲', 'label' => 'Ohh', 'color' => 'bg-red-500'],
+                                        'uhh' => ['emoji' => '😅', 'label' => 'Uhh', 'color' => 'bg-blue-500'],
+                                    ];
+                                    $currentReaction = isset($userReaction) ? $userReaction->type : null;
+                                @endphp
+                                <div class="flex flex-wrap gap-3 {{ Auth::user()->role_id == 4 ? 'opacity-50 grayscale pointer-events-none' : '' }}">
                         
                         @foreach($reactionTypes as $key => $reaction)
                             <button class="reaction-btn px-5 py-2.5 rounded-2xl font-bold transition-all duration-300 flex items-center gap-2 shadow-sm

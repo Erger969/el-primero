@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\AdminLog;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -56,10 +57,22 @@ class PostController extends Controller
             'content' => 'required|string',
         ]);
 
+        $currentImages = is_array($post->images) ? $post->images : json_decode($post->images, true);
+        if ($request->filled('removed_images')) {
+            $removed = $request->removed_images;
+            $currentImages = array_values(array_filter($currentImages, function($img) use ($removed) {
+                return !in_array($img, $removed);
+            }));
+        }
+
         $post->update([
             'title' => $request->title,
             'content' => $request->content,
+            'images' => $currentImages,
+            'is_hidden' => $request->has('is_hidden'),
         ]);
+
+        AdminLog::log('post_updated', $post);
 
         return redirect()->route('admin.posts.index')
             ->with('success', 'Publicación actualizada exitosamente.');
@@ -73,6 +86,8 @@ class PostController extends Controller
         $post->hidden_until = now()->addDays(2);
         $post->save();
 
+        AdminLog::log('post_hidden', $post, ['title' => $post->title]);
+
         return redirect()->route('admin.posts.index')
             ->with('success', 'Publicación ocultada exitosamente.');
     }
@@ -85,6 +100,8 @@ class PostController extends Controller
         $post->hidden_until = null;
         $post->save();
 
+        AdminLog::log('post_restored', $post);
+
         return redirect()->route('admin.posts.index')
             ->with('success', 'Publicación visible nuevamente.');
     }
@@ -92,7 +109,7 @@ class PostController extends Controller
     // Eliminar publicación
     public function destroy($id)
     {
-        $post = Post::findOrFail($id);
+        AdminLog::log('post_deleted', null, ['title' => $post->title, 'id' => $post->id]);
         $post->delete();
 
         return redirect()->route('admin.posts.index')

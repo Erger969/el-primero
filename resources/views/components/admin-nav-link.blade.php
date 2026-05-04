@@ -12,9 +12,12 @@ $classes = ($active ?? false)
         @elseif($icon === 'o-users') <x-heroicon-o-users class="w-6 h-6" />
         @elseif($icon === 'o-academic-cap') <x-heroicon-o-academic-cap class="w-6 h-6" />
         @elseif($icon === 'o-document-text') <x-heroicon-o-document-text class="w-6 h-6" />
+        @elseif($icon === 'o-chat-bubble-bottom-center-text') <x-heroicon-o-chat-bubble-bottom-center-text class="w-6 h-6" />
+        @elseif($icon === 'o-photo') <x-heroicon-o-photo class="w-6 h-6" />
         @elseif($icon === 'o-exclamation-triangle') <x-heroicon-o-exclamation-triangle class="w-6 h-6" />
         @elseif($icon === 'o-star') <x-heroicon-o-star class="w-6 h-6" />
         @elseif($icon === 'o-clipboard-document-list') <x-heroicon-o-clipboard-document-list class="w-6 h-6" />
+        @elseif($icon === 'o-identification') <x-heroicon-o-identification class="w-6 h-6" />
         @endif
     </div>
     <span x-show="sidebarOpen" x-transition.opacity class="font-medium whitespace-nowrap overflow-hidden">

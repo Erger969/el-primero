@@ -51,6 +51,8 @@
                 <x-admin-nav-link href="{{ route('admin.users.suspended') }}" :active="request()->routeIs('admin.users.suspended')" icon="o-no-symbol" label="Suspensiones" />
                 <x-admin-nav-link href="{{ route('admin.careers.index') }}" :active="request()->routeIs('admin.careers.*')" icon="o-academic-cap" label="Carreras" />
                 <x-admin-nav-link href="{{ route('admin.posts.index') }}" :active="request()->routeIs('admin.posts.*')" icon="o-document-text" label="Publicaciones" />
+                <x-admin-nav-link href="{{ route('admin.comments.index') }}" :active="request()->routeIs('admin.comments.*')" icon="o-chat-bubble-bottom-center-text" label="Comentarios" />
+                <x-admin-nav-link href="{{ route('admin.media.index') }}" :active="request()->routeIs('admin.media.*')" icon="o-photo" label="Multimedia" />
                 
                 <div class="pt-4 pb-2">
                     <span x-show="sidebarOpen" class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2">Moderación</span>
@@ -59,7 +61,8 @@
 
                 <x-admin-nav-link href="{{ route('admin.reports.index') }}" :active="request()->routeIs('admin.reports.*')" icon="o-exclamation-triangle" label="Reportes" />
                 <x-admin-nav-link href="{{ route('admin.master-requests.index') }}" :active="request()->routeIs('admin.master-requests.*')" icon="o-star" label="Solicitudes Master" />
-                <x-admin-nav-link href="{{ route('admin.master-activity.index') }}" :active="request()->routeIs('admin.master-activity.*')" icon="o-clipboard-document-list" label="Actividad Masters" />
+                <x-admin-nav-link href="{{ route('admin.logs.index') }}" :active="request()->routeIs('admin.logs.index')" icon="o-clipboard-document-list" label="Bitácora de Admins" />
+                <x-admin-nav-link href="{{ route('admin.master-activity.index') }}" :active="request()->routeIs('admin.master-activity.*')" icon="o-identification" label="Actividad Masters" />
             </nav>
 
             <!-- Bottom Toggle -->

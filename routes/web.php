@@ -72,6 +72,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/master-requests/{id}/reject', [App\Http\Controllers\Admin\MasterRequestController::class, 'reject'])->name('master-requests.reject');
     // Auditoría de acciones de Masters
     Route::get('/master-activity', [App\Http\Controllers\Admin\MasterActivityController::class, 'index'])->name('master-activity.index');
+    
+    // Moderación avanzada
+    Route::get('/comments', [App\Http\Controllers\Admin\CommentController::class, 'index'])->name('comments.index');
+    Route::delete('/comments/{id}', [App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::get('/media', [App\Http\Controllers\Admin\MediaController::class, 'index'])->name('media.index');
+    Route::get('/logs', [App\Http\Controllers\Admin\LogController::class, 'index'])->name('logs.index');
     Route::delete('/master-activity/{id}/revoke', [App\Http\Controllers\Admin\MasterActivityController::class, 'revokePermissions'])->name('master-activity.revoke');
 });
 

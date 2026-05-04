@@ -40,24 +40,44 @@
                     @error('content') <p class="text-rose-500 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
                 </div>
 
-                @if(!empty($post->images) && count($post->images) > 0)
-                    <div class="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl">
+                <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_hidden" class="sr-only peer" {{ $post->is_hidden ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-rose-500"></div>
+                        <span class="ml-3 text-sm font-bold text-slate-600 dark:text-slate-400">Ocultar Publicación</span>
+                    </label>
+                    <p class="text-[10px] text-slate-400 italic">(Si se activa, no aparecerá en el feed público)</p>
+                </div>
+
+                @php $postImages = is_array($post->images) ? $post->images : json_decode($post->images, true); @endphp
+                @if(is_array($postImages) && count($postImages) > 0)
+                    <div class="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl" x-data="{ removed: [] }">
                         <h4 class="text-xs font-bold text-slate-400 uppercase mb-4 flex items-center gap-2">
                             <x-heroicon-o-photo class="w-4 h-4 text-blue-500" />
                             Multimedia Adjunta
                         </h4>
                         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                            @foreach($post->images as $image)
-                                <div class="relative aspect-square group">
+                            @foreach($postImages as $image)
+                                <div class="relative aspect-square group" x-show="!removed.includes('{{ $image }}')">
                                     <img src="{{ $image }}" alt="Imagen" class="w-full h-full rounded-xl object-cover shadow-sm">
-                                    <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
-                                        <a href="{{ $image }}" target="_blank" class="p-2 bg-white rounded-full shadow-lg text-slate-800">
+                                    <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2">
+                                        <a href="{{ $image }}" target="_blank" class="p-2 bg-white rounded-full shadow-lg text-slate-800 hover:text-blue-500 transition-colors">
                                             <x-heroicon-o-arrows-pointing-out class="w-4 h-4" />
                                         </a>
+                                        <button type="button" @click="removed.push('{{ $image }}')" class="p-2 bg-white rounded-full shadow-lg text-rose-500 hover:bg-rose-50 transition-colors">
+                                            <x-heroicon-o-trash class="w-4 h-4" />
+                                        </button>
                                     </div>
+                                    <template x-if="removed.includes('{{ $image }}')">
+                                        <input type="hidden" name="removed_images[]" value="{{ $image }}">
+                                    </template>
                                 </div>
                             @endforeach
                         </div>
+                        <p x-show="removed.length > 0" class="mt-4 text-xs font-bold text-rose-500 flex items-center gap-2">
+                            <x-heroicon-o-information-circle class="w-4 h-4" />
+                            Hay imágenes marcadas para eliminar al guardar.
+                        </p>
                     </div>
                 @endif
 

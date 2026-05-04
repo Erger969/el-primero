@@ -54,8 +54,9 @@
                     <tr class="group hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
                         <td class="py-5 px-4">
                             <div class="flex items-center gap-4">
-                                @if(!empty($post->images) && count($post->images) > 0)
-                                    <img src="{{ $post->images[0] }}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
+                                @php $postImages = is_array($post->images) ? $post->images : json_decode($post->images, true); @endphp
+                                @if(is_array($postImages) && count($postImages) > 0)
+                                    <img src="{{ $postImages[0] }}" class="w-12 h-12 rounded-lg object-cover shadow-sm">
                                 @else
                                     <div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
                                         <x-heroicon-o-photo class="w-6 h-6" />

@@ -9,6 +9,7 @@ use App\Models\Comment;
 use App\Models\Report;
 use App\Models\MasterRequest;
 use App\Models\Reaction;
+use App\Models\AdminLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -69,12 +70,23 @@ class DashboardController extends Controller
         $recentReports = Report::with(['user', 'post'])->where('status', 'pending')->latest()->limit(5)->get();
         $recentMasterRequests = MasterRequest::with('user')->where('status', 'pending')->latest()->limit(5)->get();
 
+        // ========== Posts Virales (Analíticas) ==========
+        $viralPosts = Post::with('user')
+            ->withCount(['reactions', 'comments'])
+            ->orderByRaw('reactions_count + comments_count DESC')
+            ->limit(5)
+            ->get();
+
+        // ========== Últimos Logs de Admin ==========
+        $recentLogs = AdminLog::with('user')->latest()->limit(5)->get();
+
         return view('admin.dashboard', compact(
             'postsToday', 'postsThisWeek', 'postsThisMonth',
             'topCommentedPosts', 'topReactedPosts',
             'topUsers', 'usersByCareer', 'totalReports', 'totalMasterRequests',
             'totalUsers', 'totalPosts', 'totalComments',
-            'days', 'postsPerDay', 'recentReports', 'recentMasterRequests'
+            'days', 'postsPerDay', 'recentReports', 'recentMasterRequests',
+            'viralPosts', 'recentLogs'
         ));
     }
 }

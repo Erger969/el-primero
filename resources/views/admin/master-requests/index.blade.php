@@ -1,160 +1,175 @@
-<x-app-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h1 class="text-2xl font-bold mb-6">👑 Solicitudes de Ascenso a Master</h1>
+@extends('layouts.admin')
 
-                    @if(session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+@section('header_title', 'Solicitudes de Master')
 
-                    @if(session('error'))
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {{ session('error') }}
-                        </div>
-                    @endif
+@section('content')
+<div class="space-y-8 animate-fade-in" x-data="{ rejectModalOpen: false, requestId: null }">
+    
+    <!-- Solicitudes Pendientes -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+        <div class="p-8">
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <x-heroicon-o-sparkles class="w-6 h-6 text-amber-500" />
+                    Solicitudes Pendientes
+                </h3>
+                <p class="text-sm text-slate-500">Usuarios que aspiran al rango Master para moderar contenido.</p>
+            </div>
 
-                    <!-- Solicitudes pendientes -->
-                    <h2 class="text-xl font-bold mb-4">⏳ Pendientes</h2>
-                    <div class="overflow-x-auto shadow-md rounded-lg mb-8">
-                        <table class="min-w-full bg-white border border-gray-200">
-                            <thead>
-                                <tr class="bg-gray-100 border-b">
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usuario</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Carrera</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha de solicitud</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Publicaciones</th>
-                                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @forelse($requests as $request)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3">
-                                        <strong>{{ $request->user->name }} {{ $request->user->lastname }}</strong><br>
-                                        <span class="text-xs text-gray-500">{{ $request->user->email }}</span>
-                                    </td>
-                                    <td class="px-4 py-3">{{ $request->user->career->nombre ?? '—' }}</td>
-                                    <td class="px-4 py-3">{{ $request->created_at->format('d/m/Y H:i') }}</td>
-                                    <td class="px-4 py-3">{{ $request->user->posts()->count() }} publicaciones</td>
-                                    <td class="px-4 py-3 text-center">
-                                        <div class="flex justify-center gap-2">
-                                            <form action="{{ route('admin.master-requests.approve', $request->id) }}" 
-                                                  method="POST" class="inline-block">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
-                                                        onclick="return confirm('¿Aprobar a {{ $request->user->name }} como Master?')">
-                                                    ✅ Aprobar
-                                                </button>
-                                            </form>
-                                            
-                                            <button type="button" 
-                                                    onclick="openRejectModal({{ $request->id }})"
-                                                    class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
-                                                ❌ Rechazar
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">
-                                        No hay solicitudes pendientes.
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
+                            <th class="pb-4 px-4">Usuario</th>
+                            <th class="pb-4 px-4">Carrera</th>
+                            <th class="pb-4 px-4 text-center">Publicaciones</th>
+                            <th class="pb-4 px-4 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                        @forelse($requests as $request)
+                        <tr class="group hover:bg-amber-50/30 dark:hover:bg-amber-900/10 transition-colors">
+                            <td class="py-5 px-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center font-bold text-amber-600">
+                                        {{ substr($request->user->name, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-slate-800 dark:text-white">{{ $request->user->name }} {{ $request->user->lastname }}</p>
+                                        <p class="text-[10px] text-slate-500">{{ $request->user->email }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-5 px-4">
+                                <span class="text-sm text-slate-600 dark:text-slate-300">{{ $request->user->career->nombre ?? '—' }}</span>
+                                <p class="text-[10px] text-slate-500">{{ $request->created_at->format('d/m/Y H:i') }}</p>
+                            </td>
+                            <td class="py-5 px-4 text-center">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
+                                    {{ $request->user->posts()->count() }} posts
+                                </span>
+                            </td>
+                            <td class="py-5 px-4">
+                                <div class="flex justify-end gap-2">
+                                    <form action="{{ route('admin.master-requests.approve', $request->id) }}" method="POST" onsubmit="return confirm('¿Aprobar como Master?')">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase rounded-xl shadow-sm transition-all flex items-center gap-2">
+                                            <x-heroicon-o-check-badge class="w-4 h-4" />
+                                            Aprobar
+                                        </button>
+                                    </form>
+                                    
+                                    <button type="button" @click="requestId = {{ $request->id }}; rejectModalOpen = true" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black uppercase rounded-xl shadow-sm transition-all flex items-center gap-2">
+                                        <x-heroicon-o-x-mark class="w-4 h-4" />
+                                        Rechazar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="py-12 text-center text-slate-500 font-medium italic">No hay solicitudes pendientes.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-                    {{ $requests->links() }}
-
-                    <!-- Historial de solicitudes procesadas -->
-                    <h2 class="text-xl font-bold mb-4 mt-8">📜 Historial</h2>
-                    <div class="overflow-x-auto shadow-md rounded-lg">
-                        <table class="min-w-full bg-white border border-gray-200">
-                            <thead>
-                                <tr class="bg-gray-100 border-b">
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usuario</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Revisado por</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Motivo</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @forelse($history as $request)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3">{{ $request->user->name }} {{ $request->user->lastname }}</td>
-                                    <td class="px-4 py-3">
-                                        @if($request->status == 'approved')
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">✅ Aprobado</span>
-                                        @else
-                                            <span class="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">❌ Rechazado</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-3">{{ $request->reviewer->name ?? '—' }}</td>
-                                    <td class="px-4 py-3">{{ $request->updated_at->format('d/m/Y H:i') }}</td>
-                                    <td class="px-4 py-3 text-sm">{{ $request->rejection_reason ?? '—' }}</td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">
-                                        No hay solicitudes procesadas.
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {{ $history->appends(['history_page' => $history->currentPage()])->links('pagination::default') }}
-                </div>
+            <div class="mt-8">
+                {{ $requests->links() }}
             </div>
         </div>
     </div>
 
-    <!-- Modal para rechazar -->
-    <div id="rejectModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 class="text-lg font-bold mb-4">Rechazar solicitud</h3>
-            <form id="rejectForm" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-bold mb-2">Motivo del rechazo (opcional)</label>
-                    <textarea name="rejection_reason" rows="3" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
-                </div>
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="closeRejectModal()" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded">
-                        Rechazar
-                    </button>
-                </div>
-            </form>
+    <!-- Historial -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+        <div class="p-8">
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <x-heroicon-o-clock class="w-6 h-6 text-slate-400" />
+                    Historial de Decisiones
+                </h3>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
+                            <th class="pb-4 px-4">Usuario</th>
+                            <th class="pb-4 px-4 text-center">Estado</th>
+                            <th class="pb-4 px-4">Procesado por</th>
+                            <th class="pb-4 px-4 text-right">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                        @forelse($history as $item)
+                        <tr class="group text-sm">
+                            <td class="py-4 px-4 font-bold text-slate-700 dark:text-slate-300">
+                                {{ $item->user->name }} {{ $item->user->lastname }}
+                            </td>
+                            <td class="py-4 px-4 text-center">
+                                @if($item->status == 'approved')
+                                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Aprobado</span>
+                                @else
+                                    <div class="flex flex-col items-center">
+                                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400">Rechazado</span>
+                                        @if($item->rejection_reason)
+                                            <p class="text-[9px] text-slate-400 mt-1 max-w-[150px] truncate" title="{{ $item->rejection_reason }}">"{{ $item->rejection_reason }}"</p>
+                                        @endif
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="py-4 px-4 text-slate-500">
+                                {{ $item->reviewer->name ?? 'Sistema' }}
+                            </td>
+                            <td class="py-4 px-4 text-right text-xs text-slate-400">
+                                {{ $item->updated_at->format('d/m/Y H:i') }}
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="py-8 text-center text-slate-400 italic">No hay historial procesado.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-8">
+                {{ $history->appends(['history_page' => $history->currentPage()])->links() }}
+            </div>
         </div>
     </div>
 
-    <script>
-        let currentRequestId = null;
-        
-        function openRejectModal(requestId) {
-            currentRequestId = requestId;
-            const form = document.getElementById('rejectForm');
-            form.action = `/admin/master-requests/${requestId}/reject`;
-            document.getElementById('rejectModal').classList.remove('hidden');
-            document.getElementById('rejectModal').classList.add('flex');
-        }
-        
-        function closeRejectModal() {
-            document.getElementById('rejectModal').classList.add('hidden');
-            document.getElementById('rejectModal').classList.remove('flex');
-        }
-    </script>
-</x-app-layout>
+    <!-- Modal para rechazar (Alpine.js) -->
+    <template x-if="rejectModalOpen">
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 w-full max-w-md overflow-hidden animate-zoom-in" @click.away="rejectModalOpen = false">
+                <div class="p-8">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Rechazar Solicitud</h3>
+                    <p class="text-sm text-slate-500 mb-6">Por favor, indica el motivo del rechazo para informar al usuario.</p>
+                    
+                    <form :action="`/admin/master-requests/${requestId}/reject`" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-6">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Motivo (opcional)</label>
+                            <textarea name="rejection_reason" rows="3" placeholder="Ej: No cumple con los criterios de participación..." 
+                                      class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl focus:ring-2 focus:ring-rose-500 transition-all resize-none"></textarea>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" @click="rejectModalOpen = false" class="flex-1 px-6 py-3 text-sm font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl transition-all">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="flex-1 px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-2xl shadow-lg shadow-rose-500/20 transition-all transform hover:-translate-y-0.5">
+                                Confirmar Rechazo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+@endsection

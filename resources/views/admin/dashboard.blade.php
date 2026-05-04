@@ -13,10 +13,10 @@
         <x-admin-stat-card title="Solicitudes Master" :value="$totalMasterRequests" icon="o-star" color="amber" :pulse="$totalMasterRequests > 0" />
     </div>
 
-    <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Middle Section: Visuals & Analytics -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main Activity Chart -->
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
+        <div class="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
             <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
                 <x-heroicon-o-chart-bar class="w-5 h-5 text-blue-500" />
                 Actividad de Publicaciones (Últimos 7 días)
@@ -27,10 +27,10 @@
         </div>
 
         <!-- Career Distribution Chart -->
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
+        <div class="lg:col-span-1 bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
             <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
                 <x-heroicon-o-chart-pie class="w-5 h-5 text-purple-500" />
-                Distribución por Carrera
+                Carreras Activas
             </h3>
             <div class="h-64">
                 <canvas id="careerChart"></canvas>
@@ -38,7 +38,63 @@
         </div>
     </div>
 
-    <!-- Tables Row -->
+    <!-- Analytics Section: Viral & Logs -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Viral Posts Ranking -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                <x-heroicon-o-fire class="w-5 h-5 text-orange-500" />
+                Publicaciones más Virales
+            </h3>
+            <div class="space-y-4">
+                @foreach($viralPosts as $post)
+                    <div class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 font-bold">
+                                {{ $loop->iteration }}
+                            </div>
+                            <div class="max-w-[200px]">
+                                <p class="text-sm font-bold truncate">{{ $post->title }}</p>
+                                <p class="text-[10px] text-slate-500">Por: {{ $post->user->name }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 text-xs font-bold text-slate-400">
+                            <span class="flex items-center gap-1"><x-heroicon-s-heart class="w-3 h-3 text-rose-500"/> {{ $post->reactions_count }}</span>
+                            <span class="flex items-center gap-1"><x-heroicon-s-chat-bubble-left class="w-3 h-3 text-blue-500"/> {{ $post->comments_count }}</span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Recent Admin Activity Logs -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold flex items-center gap-2">
+                    <x-heroicon-o-clipboard-document-list class="w-5 h-5 text-indigo-500" />
+                    Actividad de Administradores
+                </h3>
+                <a href="{{ route('admin.logs.index') }}" class="text-xs text-blue-500 hover:underline">Ver bitácora</a>
+            </div>
+            <div class="space-y-4">
+                @foreach($recentLogs as $log)
+                    <div class="flex items-center gap-3 p-2 border-b border-slate-50 dark:border-slate-800 last:border-0">
+                        <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
+                        <div class="flex-1">
+                            <p class="text-xs">
+                                <span class="font-bold">{{ $log->user->name }}</span>
+                                <span class="text-slate-500">realizó</span>
+                                <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ str_replace('_', ' ', $log->action) }}</span>
+                            </p>
+                            <p class="text-[10px] text-slate-400">{{ $log->created_at->diffForHumans() }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <!-- Moderation Section -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <!-- Reportes Recientes -->
         <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
