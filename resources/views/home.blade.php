@@ -375,8 +375,8 @@
                 @forelse($trendingPosts as $post)
                     <a href="{{ route('posts.show', $post) }}" class="group block overflow-hidden transition-all duration-500 shadow-lg post-card bg-surface dark:bg-dark-surface rounded-2xl">
                         <div class="relative h-48 overflow-hidden">
-                            @if($post->images && count(json_decode($post->images, true)) > 0)
-                                @php $images = json_decode($post->images, true); @endphp
+                            @if($post->images && is_array($post->images) && count($post->images) > 0)
+                                @php $images = $post->images; @endphp
                                 <img src="{{ $images[0] }}" alt="{{ $post->title }}" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110">
                             @else
                                 <div class="flex items-center justify-center w-full h-full bg-gradient-to-br from-primary/30 to-secondary/30 group-hover:scale-110 transition-transform duration-700">
